@@ -1,0 +1,6 @@
+{
+  "canonical": null,
+  "error": "only http and https",
+  "request": null,
+  "text": "g ftp://example.com"
+}

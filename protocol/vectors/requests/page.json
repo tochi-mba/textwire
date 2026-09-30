@@ -1,0 +1,16 @@
+{
+  "canonical": "b1 p a7 2",
+  "error": null,
+  "request": {
+    "number": 2,
+    "plain": false,
+    "ref": 367,
+    "seqs": [],
+    "size": null,
+    "tag": 397,
+    "url": null,
+    "verb": "p",
+    "words": null
+  },
+  "text": "b1 p a7 2"
+}

@@ -1,0 +1,25 @@
+{
+  "pages": [
+    {
+      "url": "https://dunmore-gazette.example/news/text-only-library",
+      "file": "pages/article.html",
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/SMS_gateway",
+      "file": "pages/wikipedia-sms-gateway.html",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "url": "https://notes.example/reading-by-text.txt",
+      "file": "pages/notes.txt",
+      "content_type": "text/plain; charset=utf-8"
+    }
+  ],
+  "searches": [
+    {
+      "query": "bbc weather london",
+      "file": "searches/bbc-weather-london.json"
+    }
+  ]
+}

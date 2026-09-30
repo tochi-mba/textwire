@@ -1,0 +1,27 @@
+{
+  "body": "Notes on reading the web by text message\n\nA page is fetched on a computer that has the internet, reduced to its words, compressed, and sent to the phone in numbered messages. The phone puts the messages back in order, whatever order they arrive in.\n\nEach message holds at most 160 characters. Six bytes of every message are a header that says which reply it belongs to and where it goes.\n\nIf a message goes missing, the phone asks for that one again, and only that one.",
+  "kind": 1,
+  "links": [],
+  "pages": {
+    "b64/12": [
+      {
+        "payload_hex": "0101010128b52ffd60ec00750600d823747874626665732c2c20656469722e20743136306279612c612e46fc8cde47ded03e0bbfabcd69802e9092a088631e674f3aabca49b14517ff342350ceb3a15df74c94dd9f97cb42bdb29cb131f8bc9e241a2dc739e86e27163c9ca727979fe150b058d6c2575b0a08a90e158ef99466c8386b773364460b9449033d11188848cb7f7b2c3083333c6cf68d1ef26b2d556a8b43f84f66d70cb203d6336a9120643c718b860acff55fa14888c2d7a868fe30f7fd96c618c18da34b50aaa3148ea644334be0f58d10bcb589ad8a",
+        "text": "# reading-by-text.txt\n\nNotes on reading the web by text message\n\nA page is fetched on a computer that has the internet, reduced to its words, compressed, and sent to the phone in numbered messages. The phone puts the messages back in order, whatever order they arrive in.\n\nEach message holds at most 160 characters. Six bytes of every message are a header that says which reply it belongs to and where it goes.\n\nIf a message goes missing, the phone asks for that one again, and only that one."
+      }
+    ],
+    "b64/4": [
+      {
+        "payload_hex": "0101010128b52ffd60ec00750600d823747874626665732c2c20656469722e20743136306279612c612e46fc8cde47ded03e0bbfabcd69802e9092a088631e674f3aabca49b14517ff342350ceb3a15df74c94dd9f97cb42bdb29cb131f8bc9e241a2dc739e86e27163c9ca727979fe150b058d6c2575b0a08a90e158ef99466c8386b773364460b9449033d11188848cb7f7b2c3083333c6cf68d1ef26b2d556a8b43f84f66d70cb203d6336a9120643c718b860acff55fa14888c2d7a868fe30f7fd96c618c18da34b50aaa3148ea644334be0f58d10bcb589ad8a",
+        "text": "# reading-by-text.txt\n\nNotes on reading the web by text message\n\nA page is fetched on a computer that has the internet, reduced to its words, compressed, and sent to the phone in numbered messages. The phone puts the messages back in order, whatever order they arrive in.\n\nEach message holds at most 160 characters. Six bytes of every message are a header that says which reply it belongs to and where it goes.\n\nIf a message goes missing, the phone asks for that one again, and only that one."
+      }
+    ],
+    "z85g/12": [
+      {
+        "payload_hex": "0101010128b52ffd60ec00750600d823747874626665732c2c20656469722e20743136306279612c612e46fc8cde47ded03e0bbfabcd69802e9092a088631e674f3aabca49b14517ff342350ceb3a15df74c94dd9f97cb42bdb29cb131f8bc9e241a2dc739e86e27163c9ca727979fe150b058d6c2575b0a08a90e158ef99466c8386b773364460b9449033d11188848cb7f7b2c3083333c6cf68d1ef26b2d556a8b43f84f66d70cb203d6336a9120643c718b860acff55fa14888c2d7a868fe30f7fd96c618c18da34b50aaa3148ea644334be0f58d10bcb589ad8a",
+        "text": "# reading-by-text.txt\n\nNotes on reading the web by text message\n\nA page is fetched on a computer that has the internet, reduced to its words, compressed, and sent to the phone in numbered messages. The phone puts the messages back in order, whatever order they arrive in.\n\nEach message holds at most 160 characters. Six bytes of every message are a header that says which reply it belongs to and where it goes.\n\nIf a message goes missing, the phone asks for that one again, and only that one."
+      }
+    ]
+  },
+  "source": "https://notes.example/reading-by-text.txt",
+  "title": "reading-by-text.txt"
+}

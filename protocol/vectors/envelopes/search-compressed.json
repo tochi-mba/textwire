@@ -1,0 +1,11 @@
+{
+  "codec": 1,
+  "envelope": {
+    "kind": 2,
+    "page": 1,
+    "pages": 1,
+    "text": "# Search: weather\n\n1. London - BBC Weather[1] (bbc.co.uk)\n14-day forecast."
+  },
+  "fault": null,
+  "payload_hex": "0201010128b52ffd204a0d01003823656131342d2e07fc7c00acb8bc5033ffeeca4b28babcabb00a4bf0cb6c289a"
+}

@@ -1,0 +1,6 @@
+{
+  "canonical": null,
+  "error": "size must be 1-255",
+  "request": null,
+  "text": "g0 example.com"
+}

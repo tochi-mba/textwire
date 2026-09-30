@@ -1,0 +1,18 @@
+{
+  "canonical": "b3 r a7 0",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": false,
+    "ref": 367,
+    "seqs": [
+      0
+    ],
+    "size": null,
+    "tag": 399,
+    "url": null,
+    "verb": "r",
+    "words": null
+  },
+  "text": "b3 r a7 0"
+}

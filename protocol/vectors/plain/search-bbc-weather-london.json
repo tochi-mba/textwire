@@ -1,0 +1,32 @@
+{
+  "2": [
+    [
+      "[a7 1/2] # Search: bbc weather london\n\n1. London - BBC Weather[1] (bbc.com)\n14-day weather forecast for London.",
+      "[a7 2/2] 2. BBC Weather[2] (bbc.com)\nLatest weather conditions and forecasts for the UK and the world. Includes up to 14-days of hourly\n>> p! a7 2"
+    ],
+    [
+      "[a7 1/2] forecast information, warnings, maps, and the latest...\n\n3. London (Greater London) weather - Met Office[3] (weather.metoffice.gov.uk)",
+      "[a7 2/2] London 7 day weather forecast including weather warnings, temperature, rain, wind, visibility, humidity and UV\n>> p! a7 3"
+    ],
+    [
+      "[a7 1/2] 4. City of London - BBC Weather[4] (bbc.com)\n14-day weather forecast for City of London.",
+      "[a7 2/2] 5. London, London, United Kingdom Hourly Weather | AccuWeather[5] (accuweather.com)\n>> p! a7 4"
+    ],
+    [
+      "[a7 1/1] Hourly weather forecast in London, London, United Kingdom. Check current conditions in London, London, United Kingdom with radar, hourly, and more."
+    ]
+  ],
+  "4": [
+    [
+      "[a7 1/4] # Search: bbc weather london\n\n1. London - BBC Weather[1] (bbc.com)\n14-day weather forecast for London.",
+      "[a7 2/4] 2. BBC Weather[2] (bbc.com)\nLatest weather conditions and forecasts for the UK and the world. Includes up to 14-days of hourly forecast",
+      "[a7 3/4] information, warnings, maps, and the latest...\n\n3. London (Greater London) weather - Met Office[3] (weather.metoffice.gov.uk)",
+      "[a7 4/4] London 7 day weather forecast including weather warnings, temperature, rain, wind, visibility, humidity and UV\n>> p! a7 2"
+    ],
+    [
+      "[a7 1/3] 4. City of London - BBC Weather[4] (bbc.com)\n14-day weather forecast for City of London.",
+      "[a7 2/3] 5. London, London, United Kingdom Hourly Weather | AccuWeather[5] (accuweather.com)",
+      "[a7 3/3] Hourly weather forecast in London, London, United Kingdom. Check current conditions in London, London, United Kingdom with radar, hourly, and more."
+    ]
+  ]
+}

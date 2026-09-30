@@ -2,6 +2,9 @@
 
 **Status:** Accepted (2026-09-30)
 
+Implementation deferral superseded by [ADR-0013](0013-optional-z85g.md) on 2026-10-01.
+Base64url remains the default; denser encoding has not passed carrier acceptance.
+
 ## Context
 
 Twilio sends and receives text SMS only, not binary or port-addressed SMS. So a frame has to

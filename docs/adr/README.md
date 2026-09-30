@@ -22,3 +22,4 @@ here. A test fails if a record is missing from this table or a number is skipped
 | [0010](0010-carrier-terms-and-person-like-traffic.md) | The phone only ever sends what a person would | Accepted |
 | [0011](0011-not-the-default-sms-app-in-v1.md) | Not the default SMS app in v1; minSdk 31 | Accepted |
 | [0012](0012-daily-segment-budget.md) | A hard daily segment budget with a cost meter | Accepted |
+| [0013](0013-optional-z85g.md) | Optional Z85G encoding; base64url remains the default | Accepted for software testing |

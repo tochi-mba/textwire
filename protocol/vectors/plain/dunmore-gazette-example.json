@@ -1,0 +1,48 @@
+{
+  "2": [
+    [
+      "[a7 1/2] # Village gets its first text-only library\n\nResidents of Dunmore, a hill village with no mobile data signal, can now borrow the news by text message.",
+      "[a7 2/2] The scheme, run from the old post office, answers any question sent to a single number with a short, readable page - and it costs\n>> p! a7 2"
+    ],
+    [
+      "[a7 1/2] nothing to ask.\n\n\"People here have phones, they just don't have data,\" said Morag Keir[1], who started the project after the last bus route was",
+      "[a7 2/2] cut. She said the idea came from reading about the history of SMS[2] and the 160-character limit that shaped it.\n\n## How it works\n>> p! a7 3"
+    ],
+    [
+      "[a7 1/2] A text is sent to the library's number. A computer in the post office fetches the answer, trims it to the words that matter and sends it back in a",
+      "[a7 2/2] handful of messages. Longer pages arrive in parts, and readers can ask for the next part whenever they like.\n>> p! a7 4"
+    ],
+    [
+      "[a7 1/2] - Search the web by texting a few words\n- Open any page by texting its address\n- Follow a link by texting its number\n\n## What it costs",
+      "[a7 2/2] Each reply costs the library about six pence a message. The parish council has agreed to fund the first year, with a cap of two hundred\n>> p! a7 5"
+    ],
+    [
+      "[a7 1/2] messages a day.\n\n1. A search usually takes four messages.\n2. A news story usually takes twelve.\n3. A long feature can take forty.",
+      "[a7 2/2] | Reply | Messages | Cost |\n| Search | 4 | 24p |\n| Story | 12 | 72p |\n\n\"It is slow, but it is ours,\" one reader wrote back.\n>> p! a7 6"
+    ],
+    [
+      "[a7 1/2] Questions about the scheme can go to the library or to the parish council[3]. Readers who want the large-print edition should ask at the counter. A",
+      "[a7 2/2] second, longer interview[1] with Morag Keir is on page four."
+    ]
+  ],
+  "4": [
+    [
+      "[a7 1/4] # Village gets its first text-only library\n\nResidents of Dunmore, a hill village with no mobile data signal, can now borrow the news by text message.",
+      "[a7 2/4] The scheme, run from the old post office, answers any question sent to a single number with a short, readable page - and it costs nothing to ask.",
+      "[a7 3/4] \"People here have phones, they just don't have data,\" said Morag Keir[1], who started the project after the last bus route was cut. She said the",
+      "[a7 4/4] idea came from reading about the history of SMS[2] and the 160-character limit that shaped it.\n\n## How it works\n>> p! a7 2"
+    ],
+    [
+      "[a7 1/4] A text is sent to the library's number. A computer in the post office fetches the answer, trims it to the words that matter and sends it back in a",
+      "[a7 2/4] handful of messages. Longer pages arrive in parts, and readers can ask for the next part whenever they like.",
+      "[a7 3/4] - Search the web by texting a few words\n- Open any page by texting its address\n- Follow a link by texting its number\n\n## What it costs",
+      "[a7 4/4] Each reply costs the library about six pence a message. The parish council has agreed to fund the first year, with a cap of two hundred\n>> p! a7 3"
+    ],
+    [
+      "[a7 1/4] messages a day.\n\n1. A search usually takes four messages.\n2. A news story usually takes twelve.\n3. A long feature can take forty.",
+      "[a7 2/4] | Reply | Messages | Cost |\n| Search | 4 | 24p |\n| Story | 12 | 72p |\n\n\"It is slow, but it is ours,\" one reader wrote back.",
+      "[a7 3/4] Questions about the scheme can go to the library or to the parish council[3]. Readers who want the large-print edition should ask at the counter. A",
+      "[a7 4/4] second, longer interview[1] with Morag Keir is on page four."
+    ]
+  ]
+}

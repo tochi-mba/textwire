@@ -14,8 +14,12 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "ddgs>=9.16",
+    "httpx>=0.27",
     "pydantic>=2.9",
     "pydantic-settings>=2.7",
+    "trafilatura>=2.2",
+    "zstandard==0.25.0",
 ]
 
 [project.scripts]
@@ -32,6 +36,7 @@ dev = [
     "pytest>=8.3",
     "pytest-asyncio>=0.24",
     "pytest-cov>=5.0",
+    "respx>=0.21",
     "ruff>=0.6",
 ]
 
@@ -76,7 +81,8 @@ known-first-party = ["textwire", "tests"]
 convention = "google"
 
 [tool.ruff.lint.pylint]
-max-args = 8
+max-args = 10
+max-returns = 8
 
 [tool.mypy]
 python_version = "3.12"
@@ -93,7 +99,9 @@ asyncio_default_fixture_loop_scope = "function"
 filterwarnings = ["error"]
 testpaths = ["tests"]
 xfail_strict = true
-addopts = "-ra --strict-markers --strict-config -m 'not live'"
+# faulthandler is off: on Windows with Python 3.12 it prints a "Windows fatal exception" dump
+# for a WMI error that platform.system() raises and handles itself, which reads like a crash.
+addopts = "-ra --strict-markers --strict-config -m 'not live' -p no:faulthandler"
 markers = [
     "live: talks to a real Twilio account and sends real SMS; never runs in CI",
 ]
@@ -119,7 +127,36 @@ root_package = "textwire"
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
+name = "Layers: the command line on top, the wire format at the bottom"
+type = "layers"
+layers = [
+    "textwire.cli",
+    "textwire.vectors",
+    "textwire.content",
+    "textwire.protocol",
+]
+
+[[tool.importlinter.contracts]]
 name = "Configuration, logging and the clock are leaves"
 type = "forbidden"
 source_modules = ["textwire.config", "textwire.logs", "textwire.clock"]
-forbidden_modules = ["textwire.cli"]
+forbidden_modules = ["textwire.cli", "textwire.vectors", "textwire.content", "textwire.service"]
+
+[[tool.importlinter.contracts]]
+name = "The wire format is pure: no I/O, no web, no settings"
+type = "forbidden"
+source_modules = ["textwire.protocol"]
+forbidden_modules = ["httpx", "trafilatura", "ddgs", "pydantic", "pydantic_settings", "textwire.config"]
+
+[[tool.importlinter.contracts]]
+name = "One module each talks to the extractor, the search engine and the web"
+type = "forbidden"
+source_modules = [
+    "textwire.cli",
+    "textwire.vectors",
+    "textwire.content.markdown",
+    "textwire.content.pages",
+    "textwire.content.render",
+]
+forbidden_modules = ["trafilatura", "ddgs", "httpx"]
+allow_indirect_imports = true

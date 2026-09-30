@@ -1,0 +1,16 @@
+{
+  "canonical": "g https://example.com",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": false,
+    "ref": null,
+    "seqs": [],
+    "size": null,
+    "tag": null,
+    "url": "https://example.com",
+    "verb": "g",
+    "words": null
+  },
+  "text": "g https://example.com"
+}

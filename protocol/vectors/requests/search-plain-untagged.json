@@ -1,0 +1,16 @@
+{
+  "canonical": "s! weather london",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": true,
+    "ref": null,
+    "seqs": [],
+    "size": null,
+    "tag": null,
+    "url": null,
+    "verb": "s",
+    "words": "weather london"
+  },
+  "text": "s! weather london"
+}

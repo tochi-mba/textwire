@@ -1,0 +1,10 @@
+Notes on reading the web by text message
+
+A page is fetched on a computer that has the internet, reduced to its words,
+compressed, and sent to the phone in numbered messages. The phone puts the
+messages back in order, whatever order they arrive in.
+
+Each message holds at most 160 characters. Six bytes of every message are a
+header that says which reply it belongs to and where it goes.
+
+If a message goes missing, the phone asks for that one again, and only that one.

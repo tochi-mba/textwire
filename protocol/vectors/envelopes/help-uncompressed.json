@@ -1,0 +1,11 @@
+{
+  "codec": 0,
+  "envelope": {
+    "kind": 4,
+    "page": 1,
+    "pages": 1,
+    "text": "# textwire help\n\ng <address> - open a page"
+  },
+  "fault": null,
+  "payload_hex": "04000101232074657874776972652068656c700a0a67203c616464726573733e202d206f70656e20612070616765"
+}

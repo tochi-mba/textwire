@@ -1,0 +1,16 @@
+{
+  "canonical": "s1 weather",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": false,
+    "ref": null,
+    "seqs": [],
+    "size": 1,
+    "tag": null,
+    "url": null,
+    "verb": "s",
+    "words": "weather"
+  },
+  "text": "s1 weather"
+}

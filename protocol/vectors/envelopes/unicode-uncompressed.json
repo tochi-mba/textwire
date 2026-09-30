@@ -1,0 +1,11 @@
+{
+  "codec": 0,
+  "envelope": {
+    "kind": 1,
+    "page": 1,
+    "pages": 1,
+    "text": "€5 ☃"
+  },
+  "fault": null,
+  "payload_hex": "01000101e282ac3520e29883"
+}

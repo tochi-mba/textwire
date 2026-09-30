@@ -1,0 +1,16 @@
+{
+  "canonical": "a7 g https://bbc.co.uk/news",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": false,
+    "ref": null,
+    "seqs": [],
+    "size": null,
+    "tag": 367,
+    "url": "https://bbc.co.uk/news",
+    "verb": "g",
+    "words": null
+  },
+  "text": "a7 g bbc.co.uk/news"
+}
