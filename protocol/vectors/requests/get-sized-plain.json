@@ -1,0 +1,16 @@
+{
+  "canonical": "a7 g8! http://Example.com",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": true,
+    "ref": null,
+    "seqs": [],
+    "size": 8,
+    "tag": 367,
+    "url": "http://Example.com",
+    "verb": "g",
+    "words": null
+  },
+  "text": "A7 G8! http://Example.com"
+}

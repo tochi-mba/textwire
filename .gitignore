@@ -8,6 +8,7 @@ data/
 __pycache__/
 *.py[cod]
 .venv/
+.venv313/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/

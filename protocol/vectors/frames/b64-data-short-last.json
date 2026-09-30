@@ -1,0 +1,12 @@
+{
+  "alphabet": "b64",
+  "fault": null,
+  "frame": {
+    "body_hex": "c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebec",
+    "seq": 11,
+    "tag": 1,
+    "total": 12,
+    "type": 1
+  },
+  "text": "EQABCwyYyMnKy8zNzs_Q0dLT1NXW19jZ2tvc3d7f4OHi4-Tl5ufo6err7A"
+}

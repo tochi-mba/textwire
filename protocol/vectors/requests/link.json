@@ -1,0 +1,16 @@
+{
+  "canonical": "b2 l a7 7",
+  "error": null,
+  "request": {
+    "number": 7,
+    "plain": false,
+    "ref": 367,
+    "seqs": [],
+    "size": null,
+    "tag": 398,
+    "url": null,
+    "verb": "l",
+    "words": null
+  },
+  "text": "b2 l a7 7"
+}

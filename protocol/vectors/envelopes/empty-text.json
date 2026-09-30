@@ -1,0 +1,11 @@
+{
+  "codec": 0,
+  "envelope": {
+    "kind": 3,
+    "page": 1,
+    "pages": 1,
+    "text": ""
+  },
+  "fault": null,
+  "payload_hex": "03000101"
+}

@@ -1,0 +1,321 @@
+{
+  "2": [
+    [
+      "[a7 1/2] # SMS gateway\n\nAn SMS gateway is used to bridge between applications that need to send and/or receive SMS and a mobile network's Short Message",
+      "[a7 2/2] Service Center (SMSC[1]). As a result, SMS gateways provide a means of sending and receiving SMS between applications and mobile\n>> p! a7 2"
+    ],
+    [
+      "[a7 1/2] users.\n\nIn most cases, SMS and MMS are eventually routed to a mobile phone[2] through a wireless carrier. SMS gateways are commonly used as a",
+      "[a7 2/2] method for person-to-person to device-to-person (also known as application-to-person) communications. Many SMS gateways[3] support\n>> p! a7 3"
+    ],
+    [
+      "[a7 1/2] content and media conversions from email[4], push, voice, and other formats.\n\n## Gateway types\n\nedit[5]]",
+      "[a7 2/2] Several mobile telephone network operators have true fixed-wire SMS services. These are based on extensions to the European\n>> p! a7 4"
+    ],
+    [
+      "[a7 1/2] Telecommunications Standards Institute[6] (ETSI) Global System for Mobile Communications[7] (GSM) SMS standards and allow messaging between any",
+      "[a7 2/2] mix of fixed and mobile equipment. These use frequency-shift keying[8] to transfer the message between the terminal and the Short\n>> p! a7 5"
+    ],
+    [
+      "[a7 1/2] Message Service Center[9] (SMSC). Terminals are usually based on Digital Enhanced Cordless Telecommunications[10] (DECT), but wired handsets and",
+      "[a7 2/2] wired text-only (no voice) devices exist. Messages are received by the terminal recognising that the Caller ID[11] is that of the SMSC\n>> p! a7 6"
+    ],
+    [
+      "[a7 1/2] and going off-hook silently to receive the message.\n\n## Implementations\n\nedit[12]]\n\n## GSM gateway appliance\n\nedit[13]]",
+      "[a7 2/2] A direct-to-mobile gateway is a device equipped with built-in wireless GSM connectivity that enables SMS text messages to be sent and\n>> p! a7 7"
+    ],
+    [
+      "[a7 1/2] received directly via a mobile network. Messages can originate from email, web pages, or other software applications, using a unique identifier from",
+      "[a7 2/2] the mobile phone's Subscriber Identity Module (SIM card). Unlike SMS aggregators, which route messages through third-party networks,\n>> p! a7 8"
+    ],
+    [
+      "[a7 1/2] direct-to-mobile gateways are installed on an organization's own network and connect directly to a local mobile operator.",
+      "[a7 2/2] The connection is established by acquiring a SIM card from a mobile operator and installing it in the gateway. These appliances\n>> p! a7 9"
+    ],
+    [
+      "[a7 1/2] traditionally handle hundreds to thousands of messages per month, while modern devices can send up to 100,000 messages daily. Vendors that",
+      "[a7 2/2] historically provided GSM gateways for voice communications have expanded their offerings to include SMS capabilities.\n>> p! a7 10"
+    ],
+    [
+      "[a7 1/2] Advanced gateways often include features such as SIM management to control message volume per SIM, ODBC support to interface with databases, and HTTP",
+      "[a7 2/2] or SMPP interfaces for integration with third-party applications. They provide organizations with enhanced control over delivery,\n>> p! a7 11"
+    ],
+    [
+      "[a7 1/2] compliance, and reporting compared to traditional SMS aggregator services. Direct-to-mobile gateways are commonly used in scenarios requiring high",
+      "[a7 2/2] reliability and timely message delivery, such as transactional notifications, promotional campaigns, and operational alerts.\n>> p! a7 12"
+    ],
+    [
+      "[a7 1/2] ## Regulation\n\nedit[14]]\n\nGSM gateway equipment is covered by the Wireless Telegraphy Act[15] in the UK and can legally be used by any business",
+      "[a7 2/2] to send SMS to their own customers or prospects when using their own gateway equipment. In Canada, SMS gateway providers are regulated\n>> p! a7 13"
+    ],
+    [
+      "[a7 1/2] by the Canadian Wireless Telecommunications Association (CWTA/txt.ca).\nIn India, it is regulated by the Telecom Regulatory Authority of India[16]",
+      "[a7 2/2] (TRAI).\nIn Pakistan, it is regulated by the Pakistan Telecommunication Authority[17](PTA).\n\n## Direct-to-SMSC\n\nedit[18]]\n>> p! a7 14"
+    ],
+    [
+      "[a7 1/2] A direct-to-short message service centre[19] (SMSC) gateway is a software application, or a component within a software application, that connects",
+      "[a7 2/2] directly to a mobile operator's SMSC via the Internet or direct leased line connections. The Short Message Peer-to-Peer[20] (SMPP)\n>> p! a7 15"
+    ],
+    [
+      "[a7 1/2] protocol is typically used to convey SMS between an application and the SMSC. Direct-to-SMSC gateways are used by SMS aggregators to provide SMS",
+      "[a7 2/2] services to their clients and large businesses who can justify such use. They are typically employed for high volume messaging and\n>> p! a7 16"
+    ],
+    [
+      "[a7 1/2] require a contract directly with a mobile operator.\n\n## Direct-to-SMS gateway\n\nedit[21]]",
+      "[a7 2/2] An SMS gateway typically sits between the end-user who needs to send/receive SMS and a mobile network's SMSC. Such gateways provide\n>> p! a7 17"
+    ],
+    [
+      "[a7 1/2] their customers with a choice of protocols, including HTTP, SMTP, Short Message Peer-to-Peer[20] and Web Services. Providers of SMS gateway",
+      "[a7 2/2] services include SMS aggregators and mobile operators. SMS gateways are also available as part of messaging services such as AOL, ICQ\n>> p! a7 18"
+    ],
+    [
+      "[a7 1/2] and others.\n\nIn order to send/receive messages with mobile subscribers, an SMS gateway connects with (i) mobile network SMSCs and/or (ii) other SMS",
+      "[a7 2/2] gateways. It is, therefore, possible that an SMS gateway has a combination of connections with mobile network SMSCs and connections with\n>> p! a7 19"
+    ],
+    [
+      "[a7 1/2] other SMS gateways in order to provide its services. However, there is an increasing potential for delivery problems with SMS with increasing number",
+      "[a7 2/2] of SMS gateways in the delivery chain.\n\n## Email clients\n\nedit[22]]\n>> p! a7 20"
+    ],
+    [
+      "[a7 1/2] Text messages can be sent from a personal computer to mobile devices via an SMS gateway or Multimedia Messaging Service[23] (MMS) gateway, using",
+      "[a7 2/2] the most popular email client[24] programs, such as Outlook, Thunderbird, and so on. The messages must be sent in ASCII[25]\n>> p! a7 21"
+    ],
+    [
+      "[a7 1/2] \"text-only\" mode. If they are sent in HTML mode or using non-ASCII characters, they will most likely appear as nonsense on the recipient's mobile",
+      "[a7 2/2] telephone.\n\nBefore the message can be sent, one must determine the domain of the mobile carrier's SMS gateway. For example, if one wants\n>> p! a7 22"
+    ],
+    [
+      "[a7 1/2] to send a message to a mobile telephone in the United States serviced by AT&T, and the telephone number is +1 415-123-4567, the email would be",
+      "[a7 2/2] addressed as\n\n4151234567@txt.att.net\nTo determine the SMS gateway domain, *e.g.*, txt.att.net, may require research - but most users\n>> p! a7 23"
+    ],
+    [
+      "[a7 1/2] know who their carrier is. The telephone number in this example for a US number is expressed as ten (10) digits, without the country code (1) and",
+      "[a7 2/2] without dashes or other separator characters when composing the email address. The country code is not needed, as the 10-digit telephone\n>> p! a7 24"
+    ],
+    [
+      "[a7 1/2] number, together with the email domain, are sufficient to send the email from any location in the world.",
+      "[a7 2/2] It is useful to perform a character count before sending the message to ensure that it is within the 160-character limit. If it exceeds\n>> p! a7 25"
+    ],
+    [
+      "[a7 1/2] the limit, the SMS gateway should break the message into a set of consecutive 160-character, or shorter, messages to the mobile equipment, although",
+      "[a7 2/2] breaks may occur in the middle of words.\n\nA message sent with an email client can be simultaneously addressed to multiple mobile\n>> p! a7 26"
+    ],
+    [
+      "[a7 1/2] telephones - just as text messages sent in the usual manner between mobile telephones can be sent to multiple recipients.",
+      "[a7 2/2] SMS gateway domains for other carriers (US-based):\n\n| Mobile carrier | SMS gateway domain | MMS gateway domain |\n>> p! a7 27"
+    ],
+    [
+      "[a7 1/2] | Alltel[26] | sms.alltelwireless.com | mms.alltelwireless.com |\n| AT&T[27] | txt.att.net (Discontinued ) | mms.att.net |",
+      "[a7 2/2] | Boost Mobile[28] | sms.myboostmobile.com | myboostmobile.com |\n>> p! a7 28"
+    ],
+    [
+      "[a7 1/2] | Consumer Cellular[29] | mailmymobile.net | mailmymobile.net |\n| Cricket Wireless[30] | mms.cricketwireless.net | mms.cricketwireless.net",
+      "[a7 2/2] |\n| FirstNet[31] | sms.firstnet.com 1waysms.firstnet.com | sms.firstnet.com 1waysms.firstnet.com |\n>> p! a7 29"
+    ],
+    [
+      "[a7 1/2] | Google Fi Wireless[32] | | msg.fi.google.com |\n| MetroPCS[33] | mymetropcs.com | mymetropcs.com |",
+      "[a7 2/2] | Republic Wireless[34] | text.republicwireless.com | |\n| Sprint[35] | messaging.sprintpcs.com | pm.sprint.com |\n>> p! a7 30"
+    ],
+    [
+      "[a7 1/2] | T-Mobile[36] | tmomail.net | tmomail.net |\n| Ting[37] | message.ting.com | |",
+      "[a7 2/2] | U.S. Cellular[38] | email.uscc.net | mms.uscc.net |\n| Verizon Wireless[39] | vtext.com (discontinued) | vzwpix.com |\n>> p! a7 31"
+    ],
+    [
+      "[a7 1/2] | Virgin Mobile[40] | vmobl.com | vmpix.com |\n| XFinity Mobile[41] | vtext.com | mypixmessages.com |",
+      "[a7 2/2] SMS gateway domains for Canadian carriers:\n\n| Mobile carrier | SMS gateway domain |\n| Bell Canada[42] | txt.bell.ca |\n>> p! a7 32"
+    ],
+    [
+      "[a7 1/2] | Bell MTS[43] | text.mts.net |\n| Fido Solutions[44] | fido.ca |\n| Freedom Mobile[45] | txt.freedommobile.ca (Discontinued ) |",
+      "[a7 2/2] | Koodo Mobile[46] | msg.telus.com |\n| PC Mobile[47] | mobiletxt.ca |\n>> p! a7 33"
+    ],
+    [
+      "[a7 1/2] | Rogers Communications[48] | pcs.rogers.com (Discontinued ) |\n| SaskTel[49] | sms.sasktel.com |\n| Telus[50] | msg.telus.com |",
+      "[a7 2/2] 08/2026: Multiple carriers have sunset this support (Verizon, AT&T). There are other third party carriers which can enable support, but\n>> p! a7 34"
+    ],
+    [
+      "[a7 1/2] is not natively being supported by multiple carriers.\n\n## See also\n\nedit[51]]\n\n## References\n\nedit[52]]",
+      "[a7 2/2] 1. \"SMS Gateway - smpp.org\"[53] .*smpp.org* . Retrieved 2026-08-10.\n>> p! a7 35"
+    ],
+    [
+      "[a7 1/2] 2. Pot, Justin (February 3, 2016).\"How to send free text messages from your PC: Send texts via your email client\"[54] .*Digital Trends* . p.",
+      "[a7 2/2] 2.Archived[55] from the original on February 5, 2016 - via Tara Calishain.\n>> p! a7 36"
+    ],
+    [
+      "[a7 1/2] 3. \"Register for email-to-text message preferences\"[56] . AT&T.Archived[57] from the original on February 5, 2016.",
+      "[a7 2/2] 4. \"Say goodbye to email-to-text and text-to-email\"[58] .*www.att.com* . 2025-06-17. Retrieved 2025-05-30.\n>> p! a7 37"
+    ],
+    [
+      "[a7 1/2] 5. \"Sending emails to SMS or MMS\"[59] .*help.inteliquent.com* . Retrieved 2023-01-10.",
+      "[a7 2/2] 6. \"Email to SMS gateway address | Community\"[60] . 9 October 2018.\n>> p! a7 38"
+    ],
+    [
+      "[a7 1/2] 7. \"FirstNet Messaging Technical Information\" (PDF). FirstNet. Retrieved 1 October 2024.",
+      "[a7 2/2] 8.  msg.fi.google.com.... You can receive text messages as well as attachments, including images, video, and audio files up to 8MB in\n>> p! a7 39"
+    ],
+    [
+      "[a7 1/2] size.\"}},\"i\":0}}]}'/>Esparza, Jordan (February 10, 2016).\"[Launch] Send and receive emails over text message\" .*Project Fi Help Forum* .",
+      "[a7 2/2] Retrieved February 17, 2016.To get emails ... have them sent to your [ten-]digit Fi number at msg.fi.google.com .... You can receive\n>> p! a7 40"
+    ],
+    [
+      "[a7 1/2] text messages as well as attachments, including images, video, and audio files up to 8MB in size.",
+      "[a7 2/2] 9. \"Announcing Email to SMS for Your Phone! | Republic Blog\" .*Republic Blog* . 2015-09-24. Retrieved 2018-03-19.\n>> p! a7 41"
+    ],
+    [
+      "[a7 1/2] 10. \"Vtext.com FAQs | Verizon Wireless\" .*www.verizonwireless.com* . Retrieved 23 October 2015.",
+      "[a7 2/2] 11. \"What is text messaging and how do I use it?\" .*Bell* . Retrieved 19 July 2018.\n>> p! a7 42"
+    ],
+    [
+      "[a7 1/2] 12. \"Text Messaging Instructions\" .*BellMTS* . Retrieved 19 July 2018.\n13. \"Email to Text Messaging\" .*Fido* . Retrieved 8 August 2018.",
+      "[a7 2/2] 14. \"What is email to text?\" .*Freedom Mobile* . Retrieved 8 August 2018.\n>> p! a7 43"
+    ],
+    [
+      "[a7 1/2] 15. \"SMS to Email Service\" .*www.freedommobile.ca* . 2024-12-01. Retrieved 2025-05-30.",
+      "[a7 2/2] 16. \"Email to Text\" .*community.koodomobile.com* . Retrieved 8 August 2018.\n17. \"How Do I ...?\" .*PC Mobile* . Retrieved 8 August 2018.\n>> p! a7 44"
+    ],
+    [
+      "[a7 1/2] 18. \"Email to SMS - Set Up Email to Text on Your Phone\" .*Rogers* . Retrieved 19 July 2018.",
+      "[a7 2/2] 19. \"Email to SMS service discontinued\" .*communityforums.rogers.com* . 2023-07-19. Retrieved 2023-11-29.\n>> p! a7 45"
+    ],
+    [
+      "[a7 1/2] 20. \"Sending an email message using text messaging\" .*SaskTel* . Retrieved 19 July 2018.",
+      "[a7 2/2] 21. \"Send a text message by email\" .*Telus* . Archived fromthe original on 10 November 2016. Retrieved 19 July 2018.\n>> p! a7 46"
+    ],
+    [
+      "[a7 1/1] 22. \"Say Goodbye to Email-to-Text and Text-to-Email\" .*AT&T* . Retrieved 2026-08-10."
+    ]
+  ],
+  "4": [
+    [
+      "[a7 1/4] # SMS gateway\n\nAn SMS gateway is used to bridge between applications that need to send and/or receive SMS and a mobile network's Short Message",
+      "[a7 2/4] Service Center (SMSC[1]). As a result, SMS gateways provide a means of sending and receiving SMS between applications and mobile users.",
+      "[a7 3/4] In most cases, SMS and MMS are eventually routed to a mobile phone[2] through a wireless carrier. SMS gateways are commonly used as a method for",
+      "[a7 4/4] person-to-person to device-to-person (also known as application-to-person) communications. Many SMS gateways[3] support content and\n>> p! a7 2"
+    ],
+    [
+      "[a7 1/4] media conversions from email[4], push, voice, and other formats.\n\n## Gateway types\n\nedit[5]]",
+      "[a7 2/4] Several mobile telephone network operators have true fixed-wire SMS services. These are based on extensions to the European Telecommunications",
+      "[a7 3/4] Standards Institute[6] (ETSI) Global System for Mobile Communications[7] (GSM) SMS standards and allow messaging between any mix of fixed and",
+      "[a7 4/4] mobile equipment. These use frequency-shift keying[8] to transfer the message between the terminal and the Short Message Service\n>> p! a7 3"
+    ],
+    [
+      "[a7 1/4] Center[9] (SMSC). Terminals are usually based on Digital Enhanced Cordless Telecommunications[10] (DECT), but wired handsets and wired text-only",
+      "[a7 2/4] (no voice) devices exist. Messages are received by the terminal recognising that the Caller ID[11] is that of the SMSC and going off-hook silently",
+      "[a7 3/4] to receive the message.\n\n## Implementations\n\nedit[12]]\n\n## GSM gateway appliance\n\nedit[13]]",
+      "[a7 4/4] A direct-to-mobile gateway is a device equipped with built-in wireless GSM connectivity that enables SMS text messages to be sent and\n>> p! a7 4"
+    ],
+    [
+      "[a7 1/4] received directly via a mobile network. Messages can originate from email, web pages, or other software applications, using a unique identifier from",
+      "[a7 2/4] the mobile phone's Subscriber Identity Module (SIM card). Unlike SMS aggregators, which route messages through third-party networks, direct-to-mobile",
+      "[a7 3/4] gateways are installed on an organization's own network and connect directly to a local mobile operator.",
+      "[a7 4/4] The connection is established by acquiring a SIM card from a mobile operator and installing it in the gateway. These appliances\n>> p! a7 5"
+    ],
+    [
+      "[a7 1/4] traditionally handle hundreds to thousands of messages per month, while modern devices can send up to 100,000 messages daily. Vendors that",
+      "[a7 2/4] historically provided GSM gateways for voice communications have expanded their offerings to include SMS capabilities.",
+      "[a7 3/4] Advanced gateways often include features such as SIM management to control message volume per SIM, ODBC support to interface with databases, and HTTP",
+      "[a7 4/4] or SMPP interfaces for integration with third-party applications. They provide organizations with enhanced control over delivery,\n>> p! a7 6"
+    ],
+    [
+      "[a7 1/4] compliance, and reporting compared to traditional SMS aggregator services. Direct-to-mobile gateways are commonly used in scenarios requiring high",
+      "[a7 2/4] reliability and timely message delivery, such as transactional notifications, promotional campaigns, and operational alerts.\n\n## Regulation",
+      "[a7 3/4] edit[14]]\n\nGSM gateway equipment is covered by the Wireless Telegraphy Act[15] in the UK and can legally be used by any business to send SMS to",
+      "[a7 4/4] their own customers or prospects when using their own gateway equipment. In Canada, SMS gateway providers are regulated by the Canadian\n>> p! a7 7"
+    ],
+    [
+      "[a7 1/4] Wireless Telecommunications Association (CWTA/txt.ca).\nIn India, it is regulated by the Telecom Regulatory Authority of India[16] (TRAI).",
+      "[a7 2/4] In Pakistan, it is regulated by the Pakistan Telecommunication Authority[17](PTA).\n\n## Direct-to-SMSC\n\nedit[18]]",
+      "[a7 3/4] A direct-to-short message service centre[19] (SMSC) gateway is a software application, or a component within a software application, that connects",
+      "[a7 4/4] directly to a mobile operator's SMSC via the Internet or direct leased line connections. The Short Message Peer-to-Peer[20] (SMPP)\n>> p! a7 8"
+    ],
+    [
+      "[a7 1/4] protocol is typically used to convey SMS between an application and the SMSC. Direct-to-SMSC gateways are used by SMS aggregators to provide SMS",
+      "[a7 2/4] services to their clients and large businesses who can justify such use. They are typically employed for high volume messaging and require a contract",
+      "[a7 3/4] directly with a mobile operator.\n\n## Direct-to-SMS gateway\n\nedit[21]]\n\nAn SMS gateway typically sits between the end-user who needs to",
+      "[a7 4/4] send/receive SMS and a mobile network's SMSC. Such gateways provide their customers with a choice of protocols, including HTTP, SMTP,\n>> p! a7 9"
+    ],
+    [
+      "[a7 1/4] Short Message Peer-to-Peer[20] and Web Services. Providers of SMS gateway services include SMS aggregators and mobile operators. SMS gateways are",
+      "[a7 2/4] also available as part of messaging services such as AOL, ICQ and others.",
+      "[a7 3/4] In order to send/receive messages with mobile subscribers, an SMS gateway connects with (i) mobile network SMSCs and/or (ii) other SMS gateways. It",
+      "[a7 4/4] is, therefore, possible that an SMS gateway has a combination of connections with mobile network SMSCs and connections with other SMS\n>> p! a7 10"
+    ],
+    [
+      "[a7 1/4] gateways in order to provide its services. However, there is an increasing potential for delivery problems with SMS with increasing number of SMS",
+      "[a7 2/4] gateways in the delivery chain.\n\n## Email clients\n\nedit[22]]\n\nText messages can be sent from a personal computer to mobile devices via an SMS",
+      "[a7 3/4] gateway or Multimedia Messaging Service[23] (MMS) gateway, using the most popular email client[24] programs, such as Outlook, Thunderbird, and so",
+      "[a7 4/4] on. The messages must be sent in ASCII[25] \"text-only\" mode. If they are sent in HTML mode or using non-ASCII characters, they will\n>> p! a7 11"
+    ],
+    [
+      "[a7 1/4] most likely appear as nonsense on the recipient's mobile telephone.\n\nBefore the message can be sent, one must determine the domain of the mobile",
+      "[a7 2/4] carrier's SMS gateway. For example, if one wants to send a message to a mobile telephone in the United States serviced by AT&T, and the telephone",
+      "[a7 3/4] number is +1 415-123-4567, the email would be addressed as\n\n4151234567@txt.att.net",
+      "[a7 4/4] To determine the SMS gateway domain, *e.g.*, txt.att.net, may require research - but most users know who their carrier is. The telephone\n>> p! a7 12"
+    ],
+    [
+      "[a7 1/4] number in this example for a US number is expressed as ten (10) digits, without the country code (1) and without dashes or other separator characters",
+      "[a7 2/4] when composing the email address. The country code is not needed, as the 10-digit telephone number, together with the email domain, are sufficient to",
+      "[a7 3/4] send the email from any location in the world.\n\nIt is useful to perform a character count before sending the message to ensure that it is within the",
+      "[a7 4/4] 160-character limit. If it exceeds the limit, the SMS gateway should break the message into a set of consecutive 160-character, or\n>> p! a7 13"
+    ],
+    [
+      "[a7 1/4] shorter, messages to the mobile equipment, although breaks may occur in the middle of words.",
+      "[a7 2/4] A message sent with an email client can be simultaneously addressed to multiple mobile telephones - just as text messages sent in the usual manner",
+      "[a7 3/4] between mobile telephones can be sent to multiple recipients.\n\nSMS gateway domains for other carriers (US-based):",
+      "[a7 4/4] | Mobile carrier | SMS gateway domain | MMS gateway domain |\n| Alltel[26] | sms.alltelwireless.com | mms.alltelwireless.com |\n>> p! a7 14"
+    ],
+    [
+      "[a7 1/4] | AT&T[27] | txt.att.net (Discontinued ) | mms.att.net |\n| Boost Mobile[28] | sms.myboostmobile.com | myboostmobile.com |",
+      "[a7 2/4] | Consumer Cellular[29] | mailmymobile.net | mailmymobile.net |\n| Cricket Wireless[30] | mms.cricketwireless.net | mms.cricketwireless.net",
+      "[a7 3/4] |\n| FirstNet[31] | sms.firstnet.com 1waysms.firstnet.com | sms.firstnet.com 1waysms.firstnet.com |",
+      "[a7 4/4] | Google Fi Wireless[32] | | msg.fi.google.com |\n| MetroPCS[33] | mymetropcs.com | mymetropcs.com |\n>> p! a7 15"
+    ],
+    [
+      "[a7 1/4] | Republic Wireless[34] | text.republicwireless.com | |\n| Sprint[35] | messaging.sprintpcs.com | pm.sprint.com |",
+      "[a7 2/4] | T-Mobile[36] | tmomail.net | tmomail.net |\n| Ting[37] | message.ting.com | |",
+      "[a7 3/4] | U.S. Cellular[38] | email.uscc.net | mms.uscc.net |\n| Verizon Wireless[39] | vtext.com (discontinued) | vzwpix.com |",
+      "[a7 4/4] | Virgin Mobile[40] | vmobl.com | vmpix.com |\n| XFinity Mobile[41] | vtext.com | mypixmessages.com |\n>> p! a7 16"
+    ],
+    [
+      "[a7 1/4] SMS gateway domains for Canadian carriers:\n\n| Mobile carrier | SMS gateway domain |\n| Bell Canada[42] | txt.bell.ca |",
+      "[a7 2/4] | Bell MTS[43] | text.mts.net |\n| Fido Solutions[44] | fido.ca |\n| Freedom Mobile[45] | txt.freedommobile.ca (Discontinued ) |",
+      "[a7 3/4] | Koodo Mobile[46] | msg.telus.com |\n| PC Mobile[47] | mobiletxt.ca |\n| Rogers Communications[48] | pcs.rogers.com (Discontinued ) |",
+      "[a7 4/4] | SaskTel[49] | sms.sasktel.com |\n| Telus[50] | msg.telus.com |\n>> p! a7 17"
+    ],
+    [
+      "[a7 1/4] 08/2026: Multiple carriers have sunset this support (Verizon, AT&T). There are other third party carriers which can enable support, but is not",
+      "[a7 2/4] natively being supported by multiple carriers.\n\n## See also\n\nedit[51]]\n\n## References\n\nedit[52]]",
+      "[a7 3/4] 1. \"SMS Gateway - smpp.org\"[53] .*smpp.org* . Retrieved 2026-08-10.\n2. Pot, Justin (February 3, 2016).\"How to send free text messages from your PC:",
+      "[a7 4/4] Send texts via your email client\"[54] .*Digital Trends* . p. 2.Archived[55] from the original on February 5, 2016 - via Tara\n>> p! a7 18"
+    ],
+    [
+      "[a7 1/4] Calishain.\n3. \"Register for email-to-text message preferences\"[56] . AT&T.Archived[57] from the original on February 5, 2016.",
+      "[a7 2/4] 4. \"Say goodbye to email-to-text and text-to-email\"[58] .*www.att.com* . 2025-06-17. Retrieved 2025-05-30.",
+      "[a7 3/4] 5. \"Sending emails to SMS or MMS\"[59] .*help.inteliquent.com* . Retrieved 2023-01-10.",
+      "[a7 4/4] 6. \"Email to SMS gateway address | Community\"[60] . 9 October 2018.\n>> p! a7 19"
+    ],
+    [
+      "[a7 1/4] 7. \"FirstNet Messaging Technical Information\" (PDF). FirstNet. Retrieved 1 October 2024.",
+      "[a7 2/4] 8.  msg.fi.google.com.... You can receive text messages as well as attachments, including images, video, and audio files up to 8MB in",
+      "[a7 3/4] size.\"}},\"i\":0}}]}'/>Esparza, Jordan (February 10, 2016).\"[Launch] Send and receive emails over text message\" .*Project Fi Help Forum* .",
+      "[a7 4/4] Retrieved February 17, 2016.To get emails ... have them sent to your [ten-]digit Fi number at msg.fi.google.com .... You can receive\n>> p! a7 20"
+    ],
+    [
+      "[a7 1/4] text messages as well as attachments, including images, video, and audio files up to 8MB in size.",
+      "[a7 2/4] 9. \"Announcing Email to SMS for Your Phone! | Republic Blog\" .*Republic Blog* . 2015-09-24. Retrieved 2018-03-19.",
+      "[a7 3/4] 10. \"Vtext.com FAQs | Verizon Wireless\" .*www.verizonwireless.com* . Retrieved 23 October 2015.",
+      "[a7 4/4] 11. \"What is text messaging and how do I use it?\" .*Bell* . Retrieved 19 July 2018.\n>> p! a7 21"
+    ],
+    [
+      "[a7 1/4] 12. \"Text Messaging Instructions\" .*BellMTS* . Retrieved 19 July 2018.\n13. \"Email to Text Messaging\" .*Fido* . Retrieved 8 August 2018.",
+      "[a7 2/4] 14. \"What is email to text?\" .*Freedom Mobile* . Retrieved 8 August 2018.\n15. \"SMS to Email Service\" .*www.freedommobile.ca* . 2024-12-01. Retrieved",
+      "[a7 3/4] 2025-05-30.\n16. \"Email to Text\" .*community.koodomobile.com* . Retrieved 8 August 2018.\n17. \"How Do I ...?\" .*PC Mobile* . Retrieved 8 August 2018.",
+      "[a7 4/4] 18. \"Email to SMS - Set Up Email to Text on Your Phone\" .*Rogers* . Retrieved 19 July 2018.\n>> p! a7 22"
+    ],
+    [
+      "[a7 1/4] 19. \"Email to SMS service discontinued\" .*communityforums.rogers.com* . 2023-07-19. Retrieved 2023-11-29.",
+      "[a7 2/4] 20. \"Sending an email message using text messaging\" .*SaskTel* . Retrieved 19 July 2018.",
+      "[a7 3/4] 21. \"Send a text message by email\" .*Telus* . Archived fromthe original on 10 November 2016. Retrieved 19 July 2018.",
+      "[a7 4/4] 22. \"Say Goodbye to Email-to-Text and Text-to-Email\" .*AT&T* . Retrieved 2026-08-10."
+    ]
+  ]
+}

@@ -11,6 +11,11 @@ them, asks again for any that went missing, and shows a clean, tappable page.
 > **Status: under construction.** The build plan's phases land one pull request at a time;
 > [CHANGELOG.md](CHANGELOG.md) says what works today.
 
+The offline terminal simulator is runnable now. From `server/`, use
+`uv run python -m textwire simulate --offline` and enter `s bbc weather london`.
+It runs the server and a virtual phone against recorded pages without sending SMS.
+The Android UI and live SMS adapter are still pending.
+
 ## What it costs to run
 
 Every reply is paid for as outbound SMS from the server's Twilio number: $0.056 per SMS to a
@@ -37,7 +42,7 @@ make check      # every gate CI runs
 | [protocol/](protocol/PROTOCOL.md) | The wire format, golden vectors, dictionary and fixtures. |
 | [server/](server/README.md) | The Python server. |
 | `android/` | The Android app. |
-| [docs/](docs/ARCHITECTURE.md) | Architecture, onboarding, operations, testing, acceptance, ADRs. |
+| [docs/](docs/ARCHITECTURE.md) | Architecture, onboarding, operations, testing, acceptance, [optimisation](docs/OPTIMISATION.md), a [glossary](docs/GLOSSARY.md), a [FAQ](docs/FAQ.md), ADRs. |
 
 ## Licence
 

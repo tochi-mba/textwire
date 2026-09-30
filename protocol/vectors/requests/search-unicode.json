@@ -1,0 +1,16 @@
+{
+  "canonical": "c3 s café de flore",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": false,
+    "ref": null,
+    "seqs": [],
+    "size": null,
+    "tag": 435,
+    "url": null,
+    "verb": "s",
+    "words": "café de flore"
+  },
+  "text": "c3 s café de flore"
+}

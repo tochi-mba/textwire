@@ -33,7 +33,31 @@ make install
 make check
 ```
 
-## 4. Read the map
+## 4. Try the offline simulator
+
+From `server/`, run:
+
+```sh
+uv run python -m textwire simulate --offline
+```
+
+Enter `s bbc weather london`, `g https://dunmore-gazette.example/news/text-only-library`,
+`n`, `b`, `?`, or `h`. Append `!` to a request verb for readable plain SMS replies.
+Type `q` to exit. The recorded fixtures and in-memory SMS transport require no account,
+phone or network, and incur no SMS charges.
+
+To demonstrate recovery of a deliberately lost frame:
+
+```sh
+uv run python -m textwire simulate --offline --drop 1 --nak 1 -c "g https://dunmore-gazette.example/news/text-only-library"
+```
+
+`TEXTWIRE_FRAME_ALPHABET=z85g` selects the optional denser encoding. The default is `b64`.
+This simulator is currently the runnable application; the Android UI and real SMS adapter
+are still pending. Kotlin currently implements frame encoding and decoding, verified against
+the shared Python vectors; envelope decoding and the phone receiver remain to be built.
+
+## 5. Read the map
 
 - [ARCHITECTURE.md](ARCHITECTURE.md): how a request becomes a page on the phone.
 - [../protocol/PROTOCOL.md](../protocol/PROTOCOL.md): the wire format.

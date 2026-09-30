@@ -13,7 +13,7 @@ doctor: ## Check this machine for everything the repository needs
 install: ## Install the server's virtualenv
 	$(MAKE) -C server install
 
-check: server-check android-check ## Every gate CI runs
+check: server-check vectors-check android-check ## Every gate CI runs
 
 server-check: ## Server: lint, types, import contracts, tests at 100% branch coverage
 	$(MAKE) -C server check

@@ -1,0 +1,16 @@
+{
+  "canonical": "b0 s weather in london",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": false,
+    "ref": null,
+    "seqs": [],
+    "size": null,
+    "tag": 396,
+    "url": null,
+    "verb": "s",
+    "words": "weather in london"
+  },
+  "text": "b0 s weather in  london"
+}

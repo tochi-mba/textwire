@@ -1,0 +1,113 @@
+# Searches whose results make up the dictionary's training corpus: news, reference, public
+# services, sport, travel, technology and everyday how-to, leaning UK like the owner's use.
+# One query per line. Blank lines and lines starting with # are ignored.
+
+# News and current affairs
+bbc news uk
+guardian politics
+uk cost of living news
+bank of england interest rates
+train strikes uk this week
+met office weather warning
+sky news latest
+lagos news today
+
+# Reference
+how does photosynthesis work
+history of the roman empire
+wikipedia albert einstein
+wikipedia london
+wikipedia nigeria
+what is a mortgage
+how sms works
+what is 5g
+
+# Everyday how-to
+how to boil an egg
+lasagne recipe
+shepherds pie recipe
+how to change a car tyre
+first aid for burns
+symptoms of flu nhs
+how to back up whatsapp
+android battery saving tips
+wifi calling explained
+
+# Public services
+gov.uk renew passport
+council tax bands explained
+renew driving licence uk
+universal credit eligibility
+tv licence rules
+nhs 111 when to call
+
+# Sport and entertainment
+premier league results
+football transfer news
+cricket scores today
+wimbledon news
+film reviews this week
+best books of the year
+uk music charts
+asake new album
+
+# Travel and places
+london underground status
+national rail journey planner
+things to do in manchester
+weather edinburgh
+cheap flights europe
+
+# Money and work
+ftse 100 today
+pound to naira exchange rate
+how to write a cv uk
+minimum wage uk
+
+# Science and technology
+python list comprehension tutorial
+how do vaccines work
+james webb telescope news
+electric car charging uk
+
+# Added for the second training run: more everyday reading
+bbc sport football
+guardian opinion
+independent uk news
+evening standard london
+manchester evening news
+nigerian football news
+how to make jollof rice
+how to make pancakes
+how to fix a bike puncture
+how to get rid of a cold
+how to save money on energy bills
+how to apply for a mortgage
+how to renew a railcard
+how to register with a gp
+what is inflation
+what is climate change
+history of the internet
+history of nigeria
+how do planes fly
+how does the stock market work
+best phones 2026 review
+samsung galaxy tips
+iphone vs android
+premier league table
+champions league fixtures
+formula 1 results
+boxing news
+netflix new releases
+bbc iplayer what to watch
+podcast recommendations
+book review guardian
+recipe chicken curry
+recipe banana bread
+weather manchester
+weather lagos
+bus times london
+london events this weekend
+rightmove house prices
+tax return deadline hmrc
+state pension age uk

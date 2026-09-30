@@ -18,6 +18,8 @@ from typing import TYPE_CHECKING, Annotated, Self
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
+from textwire.protocol.alphabets import Alphabet
+
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
@@ -111,6 +113,9 @@ class Settings(BaseSettings):
     currency: str = "USD"
 
     # Pages and searches
+    # b64 is safe on any route; z85g carries 6% more per SMS and needs the alphabet probe to
+    # have passed on your route first (docs/OPERATIONS.md).
+    frame_alphabet: Alphabet = Alphabet.BASE64URL
     page_frames: FrameCount = 12
     max_page_frames: FrameCount = 40
     plain_messages: Annotated[int, Field(ge=1, le=9)] = 4

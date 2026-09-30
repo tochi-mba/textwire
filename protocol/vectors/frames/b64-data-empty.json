@@ -1,0 +1,12 @@
+{
+  "alphabet": "b64",
+  "fault": null,
+  "frame": {
+    "body_hex": "",
+    "seq": 0,
+    "tag": 0,
+    "total": 1,
+    "type": 1
+  },
+  "text": "EQAAAAFX"
+}

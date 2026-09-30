@@ -1,0 +1,16 @@
+{
+  "canonical": "a7 g https://example.com/path?q=1",
+  "error": null,
+  "request": {
+    "number": null,
+    "plain": false,
+    "ref": null,
+    "seqs": [],
+    "size": null,
+    "tag": 367,
+    "url": "https://example.com/path?q=1",
+    "verb": "g",
+    "words": null
+  },
+  "text": "a7 g https://example.com/path?q=1"
+}

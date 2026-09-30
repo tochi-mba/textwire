@@ -1,0 +1,11 @@
+{
+  "codec": 1,
+  "envelope": {
+    "kind": 1,
+    "page": 1,
+    "pages": 1,
+    "text": "# Café\n\n😀 # Café\n\n😀 # Café\n\n😀 "
+  },
+  "fault": null,
+  "payload_hex": "0101010128b52ffd202aad0000782320436166c3a90a0af09f98802023010011ce3a"
+}

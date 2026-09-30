@@ -1,0 +1,74 @@
+{
+  "dictionary": {
+    "id": 1,
+    "sha256": "9abf43a638bf856f587437d50c990ec4687780af90447b6592f98f46f7b7a9a2",
+    "size": 112640
+  },
+  "envelope": {
+    "codecs": {
+      "NONE": 0,
+      "ZSTD": 1
+    },
+    "faults": [
+      "short",
+      "kind",
+      "codec",
+      "page",
+      "compression",
+      "text"
+    ],
+    "kinds": {
+      "HELP": 4,
+      "PAGE": 1,
+      "SEARCH": 2,
+      "STATUS": 3
+    },
+    "max_text_bytes": 65536,
+    "min_saving": 8
+  },
+  "frame": {
+    "alphabets": {
+      "b64": {
+        "body_bytes": 114,
+        "frame_bytes": 120,
+        "marker": ""
+      },
+      "z85g": {
+        "body_bytes": 121,
+        "frame_bytes": 127,
+        "marker": "."
+      }
+    },
+    "chars": 160,
+    "faults": [
+      "encoding",
+      "length",
+      "version",
+      "crc",
+      "type",
+      "tag",
+      "sequence"
+    ],
+    "header_bytes": 6,
+    "max_frames": 255,
+    "types": {
+      "DATA": 1
+    },
+    "version": 1
+  },
+  "requests": {
+    "verbs": {
+      "GET": "g",
+      "HELP": "h",
+      "LINK": "l",
+      "PAGE": "p",
+      "RESEND": "r",
+      "SEARCH": "s",
+      "STATUS": "?"
+    }
+  },
+  "tags": {
+    "count": 1296,
+    "server_first": 1260
+  }
+}
