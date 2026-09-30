@@ -27,3 +27,12 @@ updates:
     groups:
       gradle:
         patterns: ["*"]
+    # These releases need compile SDK 37, which the Android SDK repository does not offer yet
+    # (see android/gradle/libs.versions.toml). Lift the ignores when SDK 37 ships.
+    ignore:
+      - dependency-name: androidx.core:core-ktx
+        versions: [">=1.19.0"]
+      - dependency-name: androidx.compose:compose-bom
+        versions: [">=2026.09.00"]
+      - dependency-name: androidx.work:*
+        versions: [">=2.12.0"]
