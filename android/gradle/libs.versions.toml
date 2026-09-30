@@ -1,0 +1,79 @@
+# Every JVM and Android version in the build, written once.
+#
+# Rules for adding an entry:
+#   - Pin an exact version. A range makes a build that passed today fail tomorrow for no commit.
+#   - Say why in a comment when the version is not simply the newest.
+#
+# The toolchain and AndroidX pins match REX Technologies' Flint app, which builds on the same machine
+# and SDK; see docs/adr/0006-standalone-repo-with-family-conventions.md.
+
+[versions]
+jdk = "17"
+agp = "9.4.1"
+kotlin = "2.4.20"
+jacoco = "0.8.14"
+ktlint = "1.8.0"
+
+compile-sdk = "36"
+target-sdk = "36"
+# Android 12: SmsManager comes from getSystemService with no deprecated branch. See ADR-0011.
+min-sdk = "31"
+
+# Core 1.19 and Compose BOM 2026.09 require SDK 37, which the configured SDK repository does not
+# have yet (the same constraint Flint records).
+androidx-core = "1.16.0"
+androidx-activity-compose = "1.13.0"
+androidx-lifecycle = "2.8.0"
+# 2.12 needs a newer compile SDK than 36; 2.11.2 (2026-03) is the newest that builds here.
+androidx-work = "2.11.2"
+compose-bom = "2026.05.00"
+
+coroutines = "1.11.0"
+# The compressed pages' decoder. The plain jar carries desktop natives for the JVM tests; the AAR
+# carries Android natives for the app. Same classes, same version.
+zstd-jni = "1.5.7-20"
+
+junit = "4.13.2"
+robolectric = "4.17"
+androidx-test-core = "1.7.0"
+androidx-test-ext-junit = "1.3.0"
+androidx-test-runner = "1.7.0"
+
+[libraries]
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
+androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "androidx-work" }
+
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+zstd-jni = { module = "com.github.luben:zstd-jni", version.ref = "zstd-jni" }
+
+junit = { module = "junit:junit", version.ref = "junit" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
+androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext-junit" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
+
+# What the convention plugins compile against.
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+# Run as a plain JavaExec: the command-line distribution only has to be on a classpath, so the lint
+# gate can never be what breaks a Gradle or Kotlin upgrade.
+ktlint-cli = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

@@ -1,0 +1,1 @@
+"""The ``textwire`` command line."""

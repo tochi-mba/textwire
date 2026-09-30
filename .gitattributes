@@ -1,0 +1,17 @@
+# Every text file is stored with LF, whatever the checkout platform. The Windows-only
+# scripts keep CRLF because cmd.exe and older PowerShell hosts expect it.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary artefacts. The dictionary and the Gradle wrapper jar must never be rewritten by a
+# line-ending filter: one changed byte breaks every compressed golden vector.
+*.zdict binary
+*.jar binary
+*.png binary
+*.apk binary
+
+# The golden vectors are generated. Diffs are the review surface, so keep them readable,
+# but tell GitHub not to fold them into language statistics.
+protocol/vectors/** linguist-generated=true

@@ -1,0 +1,140 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: What changed
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+      android: ${{ steps.filter.outputs.android }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        with:
+          # A change to the shared contract runs both halves.
+          filters: |
+            server:
+              - 'server/**'
+              - 'protocol/**'
+              - 'docs/**'
+              - '*.md'
+              - 'VERSION'
+              - 'Makefile'
+              - '.github/workflows/ci.yml'
+            android:
+              - 'android/**'
+              - 'protocol/**'
+              - 'VERSION'
+              - '.editorconfig'
+              - '.github/workflows/ci.yml'
+              - '.github/actions/android-setup/**'
+
+  server:
+    name: Server (${{ matrix.os }}, Python ${{ matrix.python }})
+    needs: changes
+    if: needs.changes.outputs.server == 'true'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, python: "3.12" }
+          - { os: ubuntu-latest, python: "3.13" }
+          - { os: windows-latest, python: "3.12" }
+    defaults:
+      run:
+        shell: bash
+        working-directory: server
+    env:
+      UV_PYTHON: ${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Lock file is current
+        run: uv lock --check
+      - name: Install
+        run: uv sync --group dev --python ${{ matrix.python }}
+      - name: Format and lint
+        run: |
+          uv run ruff format --check .
+          uv run ruff check --output-format=github .
+      - name: Types
+        run: uv run python -m mypy
+      - name: Import contracts
+        run: uv run python scripts/lint_imports.py
+      - name: Tests at 100% branch coverage
+        run: uv run python -P -m pytest --cov --cov-report=term-missing --cov-report=xml --junitxml=junit.xml
+      - name: Golden vectors match the reference
+        if: hashFiles('protocol/vectors/manifest.json') != ''
+        run: uv run python -m textwire vectors check
+      - name: Keep the reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: server-reports-${{ matrix.os }}-${{ matrix.python }}
+          path: |
+            server/coverage.xml
+            server/junit.xml
+          if-no-files-found: ignore
+
+  android:
+    name: Android
+    needs: changes
+    if: needs.changes.outputs.android == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/android-setup
+      - name: Lint, unit tests and coverage floors
+        run: ./gradlew check --console=plain
+      - name: Debug APK
+        if: hashFiles('android/app/build.gradle.kts') != ''
+        run: ./gradlew :app:assembleDebug --console=plain
+      - name: Keep the APK and the reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/*/build/reports/
+          if-no-files-found: ignore
+
+  # The one required check. It passes when every job that ran passed; a job skipped by the path
+  # filter counts as passed.
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs: [changes, server, android]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every job that ran passed
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "results: $RESULTS"
+          for result in $RESULTS; do
+            case "$result" in
+              success|skipped) ;;
+              *) echo "a required job ended in $result"; exit 1 ;;
+            esac
+          done

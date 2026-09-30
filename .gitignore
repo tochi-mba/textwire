@@ -1,0 +1,45 @@
+# Secrets and local state. Never commit these.
+.env
+*.env.local
+server/data/
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.import_linter_cache/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+junit.xml
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Dictionary training downloads (see protocol/dict/README.md)
+protocol/dict/cache/
+
+# Gradle and Android
+.gradle/
+android/**/build/
+android/local.properties
+android/.kotlin/
+*.apk
+*.aab
+captures/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Claude Code worktrees
+/.claude/worktrees/

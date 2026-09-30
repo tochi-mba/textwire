@@ -1,0 +1,28 @@
+# A fast local gate on a staged diff. `make check` remains the authority; CI runs it.
+# Install with: uvx pre-commit install
+default_language_version:
+  python: python3.12
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+        exclude: ^protocol/vectors/
+      - id: trailing-whitespace
+        exclude: ^protocol/vectors/
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: ["--maxkb=512"]
+      - id: detect-private-key
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.9
+    hooks:
+      - id: ruff-check
+        args: ["--fix"]
+        files: ^server/
+      - id: ruff-format
+        files: ^server/

@@ -1,0 +1,41 @@
+# One file for both halves of the repository. The Python rules follow the LUCY-assistant
+# family standard; the Kotlin rules are ktlint's configuration and follow the Flint app.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.py]
+# ruff enforces the same limit (line-length = 100).
+max_line_length = 100
+
+[*.{yml,yaml,json,jsonc,toml,md}]
+indent_size = 2
+
+[protocol/vectors/**.json]
+# Generated; the generator decides the layout.
+indent_size = unset
+insert_final_newline = true
+
+[Makefile]
+indent_style = tab
+
+[*.{cmd,bat,ps1}]
+end_of_line = crlf
+
+[*.{kt,kts}]
+indent_size = 4
+max_line_length = 120
+# intellij_idea rather than ktlint_official: the official style rewrites signatures to its own
+# taste, which puts a formatter's opinion into every diff.
+ktlint_code_style = intellij_idea
+# Composable functions are PascalCase by the framework's convention.
+ktlint_function_naming_ignore_when_annotated_with = Composable
+ktlint_standard_class-signature = disabled
+ktlint_standard_function-signature = disabled
+ktlint_standard_blank-line-between-when-conditions = disabled

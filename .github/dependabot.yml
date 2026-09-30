@@ -1,0 +1,29 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: uv
+    directory: /server
+    schedule:
+      interval: weekly
+    groups:
+      python:
+        patterns: ["*"]
+    # zstandard is pinned exactly: its output is in the golden vectors, so an upgrade is a
+    # protocol change made by hand (see docs/adr/0004-zstd-with-a-trained-dictionary.md).
+    ignore:
+      - dependency-name: zstandard
+
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: weekly
+    groups:
+      gradle:
+        patterns: ["*"]
