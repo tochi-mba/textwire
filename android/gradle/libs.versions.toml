@@ -21,12 +21,12 @@ min-sdk = "31"
 
 # Core 1.19 and Compose BOM 2026.09 require SDK 37, which the configured SDK repository does not
 # have yet (the same constraint Flint records).
-androidx-core = "1.16.0"
+androidx-core = "1.19.1"
 androidx-activity-compose = "1.13.0"
 androidx-lifecycle = "2.8.0"
 # 2.12 needs a newer compile SDK than 36; 2.11.2 (2026-03) is the newest that builds here.
-androidx-work = "2.11.2"
-compose-bom = "2026.05.00"
+androidx-work = "2.12.0"
+compose-bom = "2026.09.00"
 
 coroutines = "1.11.0"
 # The compressed pages' decoder. The plain jar carries desktop natives for the JVM tests; the AAR
