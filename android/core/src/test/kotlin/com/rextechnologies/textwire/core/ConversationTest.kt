@@ -17,8 +17,10 @@ class ConversationTest {
     fun `frames in any order complete the conversation`() {
         val c = conversation()
         assertEquals(Phase.SENT, c.phase)
+        assertNull(c.total)
         assertEquals(Decision.Wait, c.onFrame(frames[2], 1_000))
         assertEquals(Phase.RECEIVING, c.phase)
+        assertEquals(4, c.total)
         assertEquals(listOf(0, 1, 3), c.missing)
         assertEquals(Decision.Wait, c.onFrame(frames[0], 2_000))
         assertEquals(Decision.Wait, c.onFrame(frames[2], 2_500)) // a duplicate

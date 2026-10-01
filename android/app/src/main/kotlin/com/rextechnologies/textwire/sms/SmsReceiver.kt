@@ -16,26 +16,24 @@ fun parseSmsIntent(
     decode: (Intent) -> Array<SmsMessage>? = Telephony.Sms.Intents::getMessagesFromIntent,
 ): List<IncomingSms> {
     val parts = decode(intent)?.filterNotNull() ?: return emptyList()
-    return parts
-        .groupBy { it.displayOriginatingAddress ?: "" }
-        .map { (sender, messages) -> IncomingSms(sender, messages.joinToString("") { it.messageBody ?: "" }) }
+    return joinParts(parts.map { it.displayOriginatingAddress to it.messageBody })
 }
+
+/** Parts as (sender, body) pairs, joined per sender in order; a part the radio left blank is empty. */
+internal fun joinParts(parts: List<Pair<String?, String?>>): List<IncomingSms> = parts
+    .groupBy { (sender, _) -> sender.orEmpty() }
+    .map { (sender, messages) -> IncomingSms(sender, messages.joinToString("") { (_, body) -> body.orEmpty() }) }
 
 /**
  * Manifest-registered, so frames arrive while the app is not running. It does the minimum:
- * hand each message from the server's number to the controller, which stores and assembles.
+ * hand each message to the controller, which keeps those from the server's number and
+ * stores and assembles them. That is a few milliseconds of work, so it is done before
+ * `onReceive` returns.
  */
 class SmsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Telephony.Sms.Intents.SMS_RECEIVED_ACTION) return
-        val app = context.applicationContext as? TextwireApp ?: return
-        val messages = parseSmsIntent(intent)
-        if (messages.isEmpty()) return
-        val pending = goAsync()
-        try {
-            for (message in messages) app.controller.onSms(message.sender, message.body)
-        } finally {
-            pending.finish()
-        }
+        val controller = (context.applicationContext as TextwireApp).controller
+        for (message in parseSmsIntent(intent)) controller.onSms(message.sender, message.body)
     }
 }

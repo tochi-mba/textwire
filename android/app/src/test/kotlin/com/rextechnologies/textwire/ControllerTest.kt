@@ -198,4 +198,53 @@ class ControllerTest {
         for (frame in reply(500, "# Unasked\n\nx")) c.onSms(SERVER, frame)
         assertEquals("# Unasked\n\nx", c.state.value.reading?.text)
     }
+
+    @Test
+    fun `part of a reply nobody asked for is waited for and asked for again`() {
+        val c = controller()
+        val frames = reply(500, "# Unasked\n\n" + "word ".repeat(100))
+        c.onSms(SERVER, frames[0])
+        val pending = c.state.value.pending.single()
+        assertEquals(Controller.UNASKED, pending.request)
+        assertEquals(1, pending.received)
+        assertEquals(frames.size, pending.total)
+        clock.advance(SettingsSnapshot().nakAfterMillis)
+        c.tick()
+        // Tag 500 is "dw"; there is no request of ours to count the resend against.
+        assertTrue(gateway.texts().single().startsWith("00 r dw 1"))
+        assertEquals(1, c.state.value.pending.single().resends)
+        assertTrue(storage.requests.isEmpty())
+    }
+
+    @Test
+    fun `a tick before the quiet time has passed asks for nothing`() {
+        val c = controller()
+        c.get("https://example.com")
+        clock.advance(SettingsSnapshot().nakAfterMillis - 1)
+        c.tick()
+        assertEquals(listOf("00 g https://example.com"), gateway.texts())
+        val pending = c.state.value.pending.single()
+        assertEquals(0, pending.resends)
+        assertEquals(0, pending.received)
+        assertNull(pending.total)
+    }
+
+    @Test
+    fun `retry asks again in the same words whatever the request was`() {
+        val c = controller()
+        c.get("https://example.com")
+        for (frame in reply(0, "# Page\n\ntext", pages = 3)) c.onSms(SERVER, frame)
+        c.turnPage(1)
+        assertEquals("01 p 00 2", gateway.texts().last())
+        c.retry(1)
+        assertEquals("02 p 00 2", gateway.texts().last())
+        assertNull(storage.request(1))
+        assertEquals(listOf(2), c.state.value.pending.map { it.tag })
+        c.search("tea")
+        c.retry(3)
+        assertEquals("04 s tea", gateway.texts().last())
+        val sent = gateway.sent.size
+        c.retry(999)
+        assertEquals(sent, gateway.sent.size)
+    }
 }

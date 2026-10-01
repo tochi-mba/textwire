@@ -3,6 +3,7 @@ package com.rextechnologies.textwire
 import com.rextechnologies.textwire.core.Conversation
 import com.rextechnologies.textwire.core.CostMeter
 import com.rextechnologies.textwire.core.Decision
+import com.rextechnologies.textwire.core.Phase
 import com.rextechnologies.textwire.core.TagAllocator
 import com.rextechnologies.textwire.data.LogEntry
 import com.rextechnologies.textwire.data.SentRequest
@@ -124,16 +125,21 @@ class Controller(
         send(Request(Verb.PAGE, ref = reading.tag, number = target))
     }
 
+    /** Asks again for a reply that stopped: the same request, word for word, under a fresh tag. */
     fun retry(tag: Int) {
         val request = storage.request(tag) ?: return
         storage.forget(tag)
         conversations.remove(tag)
-        sendText(request.text.substringAfter(' '))
+        val words = request.text.substringAfter(' ')
+        send { fresh -> "${encodeTag(fresh)} $words" }
     }
 
     private fun pageSize(): Int? = settings.read().pageFrames.takeIf { it != SettingsSnapshot().pageFrames }
 
-    private fun send(request: Request) {
+    private fun send(request: Request) = send { tag -> formatRequest(request.copy(tag = tag)) }
+
+    /** Sends the text [textFor] makes of a freshly allocated tag, and starts waiting for its reply. */
+    private fun send(textFor: (Int) -> String) {
         val snapshot = settings.read()
         if (snapshot.serverNumber.isBlank()) {
             _state.update { it.copy(notice = "Set the server number in Settings first.", screen = Screen.SETTINGS) }
@@ -141,7 +147,7 @@ class Controller(
         }
         val tag = allocator.allocate(conversations.keys)
         settings.write(snapshot.copy(nextTag = allocator.next))
-        val text = formatRequest(request.copy(tag = tag))
+        val text = textFor(tag)
         val at = now()
         storage.saveRequest(SentRequest(tag, text, at))
         conversations[tag] = Conversation(tag, at, snapshot.nakAfterMillis)
@@ -149,16 +155,6 @@ class Controller(
         storage.log(LogEntry(at, LogEntry.Direction.OUT, text, "request"))
         scheduleNextTick()
         refresh(snapshot)
-    }
-
-    private fun sendText(text: String) {
-        val verb = text.substringBefore(' ').first().lowercaseChar()
-        val request = when (verb) {
-            'g' -> Request(Verb.GET, size = pageSize(), url = text.substringAfter(' '))
-            's' -> Request(Verb.SEARCH, size = pageSize(), words = text.substringAfter(' '))
-            else -> return
-        }
-        send(request)
     }
 
     // Frames in --------------------------------------------------------------------------------
@@ -246,19 +242,11 @@ class Controller(
         val pending = conversations.values.map { conversation ->
             Pending(
                 tag = conversation.tag,
-                request = storage.request(conversation.tag)?.text ?: "",
+                request = storage.request(conversation.tag)?.text ?: UNASKED,
                 received = conversation.received,
-                total = conversation.missing.size.let {
-                    if (conversation.received == 0 &&
-                        it == 0
-                    ) {
-                        null
-                    } else {
-                        conversation.received + it
-                    }
-                },
+                total = conversation.total,
                 resends = conversation.resends,
-                gaveUp = conversation.phase == com.rextechnologies.textwire.core.Phase.INCOMPLETE,
+                gaveUp = conversation.phase == Phase.INCOMPLETE,
             )
         }
         _state.update {
@@ -274,5 +262,8 @@ class Controller(
 
     companion object {
         const val LOG_LINES = 50
+
+        /** What a reply in flight is called when this app holds no request for it. */
+        const val UNASKED = "a reply to a request this app did not send"
     }
 }
