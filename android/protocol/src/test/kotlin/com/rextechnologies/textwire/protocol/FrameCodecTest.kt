@@ -1,6 +1,5 @@
 package com.rextechnologies.textwire.protocol
 
-import java.util.Base64
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -10,19 +9,18 @@ import kotlin.test.assertTrue
 class FrameCodecTest {
     @Test
     fun `every Python frame vector agrees in both directions`() {
-        val rows = javaClass.getResource("/frames.tsv")!!.readText().lines()
+        val rows = Vectors.rows("frames")
         assertTrue(rows.size >= 30)
-        for (row in rows) {
-            val fields = row.split('\t')
-            val text = Base64.getDecoder().decode(fields[1]).toString(Charsets.UTF_8)
-            if (fields[2].isNotEmpty()) {
-                assertEquals(fields[2], assertFailsWith<FrameException>(fields[0]) { decodeFrame(text) }.fault)
+        for (fields in rows) {
+            val (name, text, fault, alphabet) = fields
+            if (fault.isNotEmpty()) {
+                assertEquals(fault, assertFailsWith<FrameException>(name) { decodeFrame(text) }.fault)
             } else {
                 val body = fields[7].chunked(2).map { it.toInt(16).toByte() }
                 val frame = Frame(fields[4].toInt(), fields[5].toInt(), fields[6].toInt(), body)
-                assertEquals(frame, decodeFrame(text), fields[0])
-                val alphabet = if (fields[3] == "b64") Alphabet.B64 else Alphabet.Z85G
-                assertEquals(text.trim(), encodeFrame(frame, alphabet), fields[0])
+                assertEquals(frame, decodeFrame(text), name)
+                val chosen = if (alphabet == "b64") Alphabet.B64 else Alphabet.Z85G
+                assertEquals(text.trim(), encodeFrame(frame, chosen), name)
             }
         }
     }

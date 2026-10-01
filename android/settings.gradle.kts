@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "textwire"
 
-include(":protocol")
+include(":protocol", ":core")

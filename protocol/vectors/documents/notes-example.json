@@ -5,19 +5,19 @@
   "pages": {
     "b64/12": [
       {
-        "payload_hex": "0101010128b52ffd60ec00750600d823747874626665732c2c20656469722e20743136306279612c612e46fc8cde47ded03e0bbfabcd69802e9092a088631e674f3aabca49b14517ff342350ceb3a15df74c94dd9f97cb42bdb29cb131f8bc9e241a2dc739e86e27163c9ca727979fe150b058d6c2575b0a08a90e158ef99466c8386b773364460b9449033d11188848cb7f7b2c3083333c6cf68d1ef26b2d556a8b43f84f66d70cb203d6336a9120643c718b860acff55fa14888c2d7a868fe30f7fd96c618c18da34b50aaa3148ea644334be0f58d10bcb589ad8a",
+        "payload_hex": "0101010128b52ffd60ec00e505008023740a416665786172656c79676f612e3bfc7c5596c0973b314ec698d8a0e7a7100ec51ceb3d5aad0ba826b0cdc296ebd01f122dd04e7a388518dc06f283df9ff1cda3cd2c32253ede592f683ac47b275b24dd9f0054b40388b97554c2936c9e07b5838f1dde6a53a1688b6251e2908747c06fcfd018a32bcb6abba79dbb2101acf019a90a53f20d6d13812071bc4abaf7f11d6ba1a1e538ef53046fd97d5dc6d4db08a3a5d906019409da094265c69ebd6b47c4ac34e700d14116",
         "text": "# reading-by-text.txt\n\nNotes on reading the web by text message\n\nA page is fetched on a computer that has the internet, reduced to its words, compressed, and sent to the phone in numbered messages. The phone puts the messages back in order, whatever order they arrive in.\n\nEach message holds at most 160 characters. Six bytes of every message are a header that says which reply it belongs to and where it goes.\n\nIf a message goes missing, the phone asks for that one again, and only that one."
       }
     ],
     "b64/4": [
       {
-        "payload_hex": "0101010128b52ffd60ec00750600d823747874626665732c2c20656469722e20743136306279612c612e46fc8cde47ded03e0bbfabcd69802e9092a088631e674f3aabca49b14517ff342350ceb3a15df74c94dd9f97cb42bdb29cb131f8bc9e241a2dc739e86e27163c9ca727979fe150b058d6c2575b0a08a90e158ef99466c8386b773364460b9449033d11188848cb7f7b2c3083333c6cf68d1ef26b2d556a8b43f84f66d70cb203d6336a9120643c718b860acff55fa14888c2d7a868fe30f7fd96c618c18da34b50aaa3148ea644334be0f58d10bcb589ad8a",
+        "payload_hex": "0101010128b52ffd60ec00e505008023740a416665786172656c79676f612e3bfc7c5596c0973b314ec698d8a0e7a7100ec51ceb3d5aad0ba826b0cdc296ebd01f122dd04e7a388518dc06f283df9ff1cda3cd2c32253ede592f683ac47b275b24dd9f0054b40388b97554c2936c9e07b5838f1dde6a53a1688b6251e2908747c06fcfd018a32bcb6abba79dbb2101acf019a90a53f20d6d13812071bc4abaf7f11d6ba1a1e538ef53046fd97d5dc6d4db08a3a5d906019409da094265c69ebd6b47c4ac34e700d14116",
         "text": "# reading-by-text.txt\n\nNotes on reading the web by text message\n\nA page is fetched on a computer that has the internet, reduced to its words, compressed, and sent to the phone in numbered messages. The phone puts the messages back in order, whatever order they arrive in.\n\nEach message holds at most 160 characters. Six bytes of every message are a header that says which reply it belongs to and where it goes.\n\nIf a message goes missing, the phone asks for that one again, and only that one."
       }
     ],
     "z85g/12": [
       {
-        "payload_hex": "0101010128b52ffd60ec00750600d823747874626665732c2c20656469722e20743136306279612c612e46fc8cde47ded03e0bbfabcd69802e9092a088631e674f3aabca49b14517ff342350ceb3a15df74c94dd9f97cb42bdb29cb131f8bc9e241a2dc739e86e27163c9ca727979fe150b058d6c2575b0a08a90e158ef99466c8386b773364460b9449033d11188848cb7f7b2c3083333c6cf68d1ef26b2d556a8b43f84f66d70cb203d6336a9120643c718b860acff55fa14888c2d7a868fe30f7fd96c618c18da34b50aaa3148ea644334be0f58d10bcb589ad8a",
+        "payload_hex": "0101010128b52ffd60ec00e505008023740a416665786172656c79676f612e3bfc7c5596c0973b314ec698d8a0e7a7100ec51ceb3d5aad0ba826b0cdc296ebd01f122dd04e7a388518dc06f283df9ff1cda3cd2c32253ede592f683ac47b275b24dd9f0054b40388b97554c2936c9e07b5838f1dde6a53a1688b6251e2908747c06fcfd018a32bcb6abba79dbb2101acf019a90a53f20d6d13812071bc4abaf7f11d6ba1a1e538ef53046fd97d5dc6d4db08a3a5d906019409da094265c69ebd6b47c4ac34e700d14116",
         "text": "# reading-by-text.txt\n\nNotes on reading the web by text message\n\nA page is fetched on a computer that has the internet, reduced to its words, compressed, and sent to the phone in numbered messages. The phone puts the messages back in order, whatever order they arrive in.\n\nEach message holds at most 160 characters. Six bytes of every message are a header that says which reply it belongs to and where it goes.\n\nIf a message goes missing, the phone asks for that one again, and only that one."
       }
     ]
