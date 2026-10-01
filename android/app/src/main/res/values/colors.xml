@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The REX ink/signal palette; the Compose theme in ui/Theme.kt holds the same values. -->
 <resources>
-    <color name="launcher_background">#1B5E20</color>
+    <color name="ink">#080A09</color>
+    <color name="launcher_background">#080A09</color>
 </resources>

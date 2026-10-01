@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- What the window shows before Compose draws: the same ink, so opening the app never flashes white. -->
+    <style name="Theme.Textwire" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/ink</item>
+    </style>
+</resources>
