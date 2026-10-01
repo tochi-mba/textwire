@@ -11,6 +11,7 @@ every one is listed with its default in [../server/.env.example](../server/.env.
 - [4. What it costs and how it is capped](#4-what-it-costs-and-how-it-is-capped)
 - [5. The alphabet probe](#5-the-alphabet-probe)
 - [6. Watching it run](#6-watching-it-run)
+- [6a. The dashboard](#6a-the-dashboard)
 - [7. Runbook](#7-runbook)
 - [8. The Android gateway transport](#8-the-android-gateway-transport)
 - [9. Every setting](#9-every-setting)
@@ -114,6 +115,26 @@ appears. The lines worth knowing:
 | `send failed error=... attempts=4` | Twilio refused a message after retries. The phone will ask for the frame again. |
 | `resending a message the provider could not deliver` | Twilio reported a frame undelivered; it was sent once more. |
 | `requests were recorded but not fully answered before the last stop` | The server stopped mid-reply last time. The phone asks for what it is missing. |
+
+## 6a. The dashboard
+
+`make run` also serves a dashboard at `http://127.0.0.1:8140/` (`TEXTWIRE_HOST` and
+`TEXTWIRE_PORT`). It is one page with no external assets that refreshes every five seconds
+and shows:
+
+- whether the server is alive and which transport, number, alphabet and page size it runs with;
+- today's budget as a bar, the estimated cost, what the provider has actually charged so far,
+  and how many SMS went out;
+- the recent requests with who sent them (masked), how many replies each got, and whether it
+  has been answered;
+- the documents still held for paging and links, with the reply tag to quote;
+- a form that sends the route probe to a phone on the allowlist (section 5).
+
+It also answers `/healthy` (alive, no I/O), `/ready` (the store answers and the transport is
+configured; `503` otherwise) and `/api/overview` (the JSON the page draws). The dashboard
+binds to localhost and has no login: it is an operator's window onto their own machine.
+Exposing it would need a reverse proxy with authentication in front, and is not something
+the server does for you.
 
 ## 7. Runbook
 

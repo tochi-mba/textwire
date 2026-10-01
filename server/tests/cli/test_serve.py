@@ -6,22 +6,27 @@ from pathlib import Path
 import httpx
 import pytest
 import respx
+import uvicorn
+from asgi_lifespan import LifespanManager
+from fastapi import FastAPI
+from httpx import ASGITransport, AsyncClient
 
 from tests.conftest import PHONE, SERVER, build_settings
 from tests.service.conftest import memory_store
+from textwire.api.app import create_app
 from textwire.cli.main import main
 from textwire.cli.serve import (
-    PROBE_TAG,
     ConfigurationError,
+    _uvicorn,
     build_transport,
     probe,
-    probe_frame,
     serve,
 )
 from textwire.clock import FakeClock
-from textwire.config import TransportKind
+from textwire.config import Settings, TransportKind
 from textwire.protocol.alphabets import Alphabet
 from textwire.protocol.frames import body_bytes, decode_frame
+from textwire.service.probe import PROBE_TAG, probe_frame
 from textwire.transport.twilio import TwilioTransport
 
 SID = "AC" + "0" * 32
@@ -84,17 +89,37 @@ async def test_serve_refuses_incomplete_settings(
 
 
 @respx.mock
-async def test_serve_runs_until_stopped(tmp_path: Path) -> None:
+async def test_serve_runs_the_app_with_the_dispatcher_inside(tmp_path: Path) -> None:
     respx.get(f"{BASE}/Messages.json").mock(
         return_value=httpx.Response(200, json={"messages": [], "next_page_uri": None})
     )
-    stop = asyncio.Event()
+    seen: list[str] = []
+
+    async def runner(app: FastAPI, settings: Settings) -> None:
+        async with (
+            LifespanManager(app),
+            AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as http,
+        ):
+            seen.append((await http.get("/ready")).json()["status"])
+            await asyncio.sleep(0.05)
+        seen.append(f"{settings.host}:{settings.port}")
+
     settings = build_settings(data_dir=tmp_path, poll_seconds=0.01, status_interval_seconds=0.01)
-    task = asyncio.create_task(serve(settings, stop))
-    await asyncio.sleep(0.05)
-    stop.set()
-    assert await task == 0
+    assert await serve(settings, runner=runner) == 0
+    assert seen == ["ready", "127.0.0.1:8140"]
     assert (tmp_path / "textwire.db").exists()
+
+
+async def test_uvicorn_is_configured_from_the_settings(monkeypatch: pytest.MonkeyPatch) -> None:
+    configs: list[uvicorn.Config] = []
+
+    async def fake_serve(self: uvicorn.Server) -> None:
+        configs.append(self.config)
+
+    monkeypatch.setattr(uvicorn.Server, "serve", fake_serve)
+    app = create_app(None)
+    await _uvicorn(app, build_settings(host="127.0.0.2", port=9001))
+    assert (configs[0].host, configs[0].port, configs[0].access_log) == ("127.0.0.2", 9001, False)
 
 
 def test_the_cli_exposes_serve_and_probe(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

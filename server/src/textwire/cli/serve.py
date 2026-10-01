@@ -1,38 +1,41 @@
 """``textwire serve``: run the real server, and ``textwire probe``: send one test frame.
 
-``serve`` builds the configured transport, wires the components and runs the dispatcher
-until interrupted. ``probe`` sends a single frame whose body holds every byte value the
-chosen alphabet must carry, so the phone's Diagnostics screen can say whether the route
-preserved every character (docs/OPERATIONS.md section 5).
+``serve`` builds the configured transport, wires the components, and serves the dashboard
+with the dispatcher running inside its lifespan, until interrupted. ``probe`` sends a single
+frame whose body holds every byte value the chosen alphabet must carry, so the phone's
+Diagnostics screen can say whether the route preserved every character (docs/OPERATIONS.md
+section 5).
 """
 
 from __future__ import annotations
 
-import asyncio
-import contextlib
 import logging
-import signal
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
+import uvicorn
+
+from textwire.api.app import create_app
 from textwire.clock import SystemClock
 from textwire.config import TransportKind, load_settings
 from textwire.logs import configure_logging, mask_number
-from textwire.protocol.frames import Frame, body_bytes, encode_frame
-from textwire.protocol.tags import TAG_COUNT
+from textwire.service.probe import probe_frame
 from textwire.service.store import Store
 from textwire.service.wiring import build_components
 from textwire.transport.twilio import TwilioClient, TwilioTransport
 
 if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable
+
+    from fastapi import FastAPI
+
     from textwire.clock import Clock
     from textwire.config import Settings
     from textwire.transport.base import Transport
 
-log = logging.getLogger(__name__)
+    type Runner = Callable[[FastAPI, Settings], Awaitable[None]]
 
-#: The tag a probe frame carries: the last server tag, which a phone never allocates.
-PROBE_TAG = TAG_COUNT - 1
+log = logging.getLogger(__name__)
 
 
 class ConfigurationError(Exception):
@@ -62,15 +65,16 @@ def build_transport(settings: Settings, store: Store, clock: Clock) -> Transport
     )
 
 
-def probe_frame(settings: Settings) -> str:
-    """A frame whose body cycles through every byte value the alphabet must carry."""
-    size = body_bytes(settings.frame_alphabet)
-    body = bytes((index * 7 + 3) % 256 for index in range(size))
-    return encode_frame(Frame(tag=PROBE_TAG, seq=0, total=1, body=body), settings.frame_alphabet)
+async def _uvicorn(app: FastAPI, settings: Settings) -> None:
+    """Serve ``app`` with uvicorn until the process is told to stop."""
+    config = uvicorn.Config(
+        app, host=settings.host, port=settings.port, log_config=None, access_log=False
+    )
+    await uvicorn.Server(config).serve()
 
 
-async def serve(settings: Settings | None = None, stop: asyncio.Event | None = None) -> int:
-    """Run the server until ``stop`` is set or the process is interrupted."""
+async def serve(settings: Settings | None = None, *, runner: Runner | None = None) -> int:
+    """Run the server: the dispatcher and the dashboard in one process, until interrupted."""
     settings = settings if settings is not None else load_settings()
     configure_logging(settings.log_level, settings.log_format)
     clock = SystemClock()
@@ -83,11 +87,7 @@ async def serve(settings: Settings | None = None, stop: asyncio.Event | None = N
         print(f"cannot start: {error}. Run `textwire doctor`.")
         return 2
     components = build_components(settings, transport=transport, clock=clock, store=store)
-    stop = stop if stop is not None else asyncio.Event()
-    loop = asyncio.get_running_loop()
-    for signum in (signal.SIGINT, signal.SIGTERM):
-        with contextlib.suppress(NotImplementedError, RuntimeError):
-            loop.add_signal_handler(signum, stop.set)
+    app = create_app(components)
     log.info(
         "serving",
         extra={
@@ -95,10 +95,11 @@ async def serve(settings: Settings | None = None, stop: asyncio.Event | None = N
             "number": mask_number(settings.twilio_number),
             "allowed": len(settings.allowed_numbers),
             "alphabet": settings.frame_alphabet.value,
+            "dashboard": f"http://{settings.host}:{settings.port}/",
         },
     )
     try:
-        await components.dispatcher.run(stop)
+        await (runner if runner is not None else _uvicorn)(app, settings)
     finally:
         await components.aclose()
     return 0

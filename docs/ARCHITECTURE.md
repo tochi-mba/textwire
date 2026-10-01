@@ -38,7 +38,7 @@
 | `textwire.transport` | Twilio, the Android gateway, and a fake, behind one interface (`Transport`: `receive`, `send`, `status`). | protocol |
 | `textwire.service` | `store` (SQLite), `budget`, `library` (URLs and queries to documents), `handler` (one request to its replies: resolve, render, commit), `dispatcher` (the receive and maintenance loops), `wiring` (builds them from settings). | content, transport, protocol |
 | `textwire.vectors` | Generates and checks the golden vectors from the reference implementation. | content, protocol |
-| `textwire.api` | Health endpoints and the optional Twilio webhook. | service and below |
+| `textwire.api` | `/healthy`, `/ready`, the operator dashboard (one self-contained page) and `/api/overview` and `/api/probe` behind it; the dispatcher runs inside the app's lifespan so `textwire serve` is one process. | service and below |
 | `textwire.simulate` | `phone` (the app's receiving logic in Python: tags, reassembly, resend requests) and `session` (a running server plus that phone over the fake transport; what `textwire simulate` drives). | service and below |
 | `textwire.cli` | The `textwire` command. | everything |
 
