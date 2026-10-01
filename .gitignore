@@ -1,10 +1,9 @@
 # Secrets and local state. Never commit these.
 .env
 *.env.local
-server/data/
-data/
-# The server's packaged copy of the shared dictionary is source, not state.
-!server/src/textwire/protocol/data/
+# Runtime state only at these two places; a `data` package in source is not state.
+/server/data/
+/data/
 
 # Python
 __pycache__/
