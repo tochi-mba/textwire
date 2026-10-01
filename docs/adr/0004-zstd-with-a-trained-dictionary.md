@@ -11,8 +11,9 @@ history before the first byte.
 
 ## Decision
 
-Pages are compressed with zstd at level 19 using a 64 KiB dictionary trained on real
-extracted pages and search results. The dictionary is committed at
+Pages are compressed with zstd at level 19 using a dictionary trained on real extracted
+pages and search results (880 KiB in v1; the training run tries several sizes and keeps the
+best held-out result). The dictionary is committed at
 `protocol/dict/textwire-v1.zdict` with its SHA-256, and its id is the codec number in the
 envelope. The server compresses with `zstandard` (pinned exactly, because the golden vectors
 depend on its output); the app decompresses with `zstd-jni`. Retraining the dictionary is a

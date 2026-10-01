@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: read
+  # dorny/paths-filter reads the pull request's file list through the API.
+  pull-requests: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

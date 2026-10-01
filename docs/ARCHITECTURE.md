@@ -49,6 +49,6 @@ import-linter enforces these rules in `make check`.
 
 | Module | Responsibility |
 | --- | --- |
-| `:protocol` | Pure Kotlin: the frame codec, request formatting, envelopes, zstd decompression, GSM-7. |
-| `:core` | Pure Kotlin: reassembly, the per-response conversation state machine, the Markdown subset, the budget meter. |
+| `:protocol` | Pure Kotlin: `FrameCodec` (both alphabets), `Tags`, `Requests` (canonical formatting), `Envelope` (unpacking and `joinFrames`), `Compression` (zstd with the packaged dictionary). Tested against the shared golden vectors. |
+| `:core` | Pure Kotlin: `Conversation` (the per-response state machine of PROTOCOL.md section 8: frames in, resend requests and give-up out, clock passed in), `TagAllocator`, `Markdown` (document text to blocks and chips), `CostMeter`. |
 | `:app` | Android: the SMS receiver and sender, SQLite storage, the resend worker, and the Compose UI. |

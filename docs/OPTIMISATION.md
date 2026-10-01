@@ -55,6 +55,7 @@ compressed bytes; higher is better.
 | zstd level 22, 110 KiB dictionary | 2.88x | Level 22 earns nothing over 19 on page-sized inputs. |
 | zstd level 19, 220 KiB dictionary | 2.98x | |
 | zstd level 19, 440 KiB dictionary | 3.10x | |
+| zstd level 19, 880 KiB dictionary | 3.25x | The committed dictionary. |
 | Case-folding transform, then zstd with a 110 KiB dictionary | 2.90x | +0.7%. Not worth a second codec on the phone. |
 | GSM-7 sanitised text, then zstd | 2.86x | The text is already 99.8% ASCII; nothing to gain. |
 
@@ -63,12 +64,13 @@ What this says:
 - **The dictionary is the whole game.** Without it, every general-purpose compressor lands
   within a few percent of 2.2x. With it, zstd gains 30 to 40 percent, because a page is a few
   kilobytes and a compressor without history has nothing to refer back to.
-- **Bigger dictionaries keep paying.** 110 to 440 KiB is worth 7.6 percent fewer bytes, or
-  about one SMS in thirteen. The cost is 440 KiB in the APK and in server memory, which is
-  nothing; the app already ships a native zstd library ten times that size. The dictionary
-  is retrained at a range of sizes and the best held-out result is chosen (see
-  [../protocol/dict/README.md](../protocol/dict/README.md) for the run that produced the
-  committed file).
+- **Bigger dictionaries keep paying.** Each doubling from 110 KiB to 880 KiB bought 3.5 to
+  4.7 percent fewer bytes, and the gain had not flattened at 880 KiB. The committed
+  dictionary is the 880 KiB one: 11.4 percent fewer bytes than the first, about one SMS in
+  nine. The cost is 880 KiB in the APK and in server memory, which is nothing next to the
+  native zstd library the app already ships. The training script tries a range of sizes and
+  keeps the best held-out result ([../protocol/dict/README.md](../protocol/dict/README.md)
+  records the run); trying 1.7 and 3.5 MiB is the next cheap experiment.
 - **Transforms before the compressor do not pay.** A trained dictionary already learns the
   casing and punctuation of English; folding case by hand recovers under one percent.
 - **Level 19 is the right level.** Level 22 is slower and no smaller on these inputs.
@@ -150,10 +152,9 @@ For a typical 4 KB extracted article page at the defaults:
 | Step | Bytes | SMS |
 | --- | --- | --- |
 | Extracted Markdown for one page | 4,000 | |
-| zstd with the 110 KiB dictionary (2.88x) | 1,389 | 12.2 in base64url |
-| zstd with the 440 KiB dictionary (3.10x) | 1,290 | 11.3 in base64url, 10.7 in Z85G |
+| zstd with the first, 110 KiB dictionary (2.88x) | 1,389 | 12.2 in base64url |
+| zstd with the committed 880 KiB dictionary (3.25x) | 1,231 | 10.8 in base64url, 10.2 in Z85G |
 
-So the two levers still open (the bigger dictionary, on by the next training run, and Z85G,
-on after the route probe) take a page from 12.2 SMS to 10.7: 12 percent fewer, about eight
-cents a page at Twilio's rate. Everything larger than that was already taken by reader
+So the bigger dictionary, already in, and Z85G, on after the route probe, take a page from
+12.2 SMS to 10.2: 16 percent fewer, about eleven cents a page at Twilio's rate. Everything larger than that was already taken by reader
 mode, chips and pagination before the first SMS was sent.

@@ -20,7 +20,7 @@ the URL. ADR-0008.
 **Codec.** How the text inside an envelope is encoded: `0` is raw UTF-8, `1` is zstd with the
 shared dictionary. PROTOCOL.md section 4.
 
-**Dictionary.** The 110 KiB (or larger) zstd dictionary trained on real pages, committed at
+**Dictionary.** The zstd dictionary (880 KiB in v1) trained on real pages, committed at
 `protocol/dict/textwire-v1.zdict` and shipped in both the server and the app. It is what
 makes small pages compress well. ADR-0004.
 

@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from textwire import __version__
 from textwire.cli.doctor import doctor
+from textwire.cli.serve import probe, serve
 from textwire.cli.simulate import simulate
 from textwire.vectors import check, find_repo_root, write
 
@@ -33,6 +34,14 @@ def _simulate(args: argparse.Namespace) -> int:
             page_frames=args.page_frames,
         )
     )
+
+
+def _serve(_args: argparse.Namespace) -> int:
+    return asyncio.run(serve())
+
+
+def _probe(args: argparse.Namespace) -> int:
+    return asyncio.run(probe(args.number))
 
 
 def _vectors(args: argparse.Namespace) -> int:
@@ -85,6 +94,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     command.add_argument("--page-frames", type=int, help="SMS per page (default from settings)")
     command.set_defaults(handler=_simulate)
+
+    command = commands.add_parser("serve", help="run the server: poll for requests and answer")
+    command.set_defaults(handler=_serve)
+
+    command = commands.add_parser(
+        "probe", help="send one frame with every byte value to a phone (route check)"
+    )
+    command.add_argument("number", help="the phone to send it to, in E.164 form")
+    command.set_defaults(handler=_probe)
 
     command = commands.add_parser("vectors", help="regenerate or check the golden vectors")
     command.add_argument("action", choices=["regen", "check"])
