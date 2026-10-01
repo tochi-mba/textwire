@@ -1,0 +1,93 @@
+# The documentation site, published to GitHub Pages from main.
+#
+# The pages are the repository's own Markdown, staged by server/scripts/build_site.py into
+# build/site-src with their paths preserved, so every relative link in the repository works
+# unchanged on the site and `mkdocs build --strict` fails on any that does not.
+site_name: textwire
+site_description: A text-mode web over SMS. A REX Technologies product.
+site_url: https://tochi-mba.github.io/textwire/
+repo_url: https://github.com/tochi-mba/textwire
+repo_name: tochi-mba/textwire
+edit_uri: ""
+copyright: Copyright &copy; 2026 REX Technologies. MIT licence.
+
+docs_dir: build/site-src
+site_dir: build/site
+strict: true
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+  icon:
+    logo: material/message-text-outline
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+nav:
+  - Home: index.md
+  - Start here:
+      - Onboarding: docs/ONBOARDING.md
+      - FAQ: docs/FAQ.md
+      - Glossary: docs/GLOSSARY.md
+  - How it works:
+      - Architecture: docs/ARCHITECTURE.md
+      - The protocol: protocol/PROTOCOL.md
+      - Optimisation: docs/OPTIMISATION.md
+      - The dictionary: protocol/dict/README.md
+      - Fixtures: protocol/fixtures/README.md
+  - Running it:
+      - Operations: docs/OPERATIONS.md
+      - Testing: docs/TESTING.md
+      - Acceptance: docs/ACCEPTANCE.md
+      - The server: server/README.md
+  - Decisions:
+      - Index: docs/adr/README.md
+      - "0001 Monorepo": docs/adr/0001-monorepo-protocol-server-android.md
+      - "0002 One SMS per frame": docs/adr/0002-a-frame-is-one-single-segment-sms.md
+      - "0003 Base64url frames": docs/adr/0003-base64url-frames.md
+      - "0004 zstd dictionary": docs/adr/0004-zstd-with-a-trained-dictionary.md
+      - "0005 Twilio by polling": docs/adr/0005-twilio-inbound-by-polling.md
+      - "0006 Standalone repo": docs/adr/0006-standalone-repo-with-family-conventions.md
+      - "0007 Plain-text requests": docs/adr/0007-requests-are-plain-text.md
+      - "0008 Link chips": docs/adr/0008-numbered-link-chips.md
+      - "0009 Coverage floors": docs/adr/0009-coverage-floors.md
+      - "0010 Carrier terms": docs/adr/0010-carrier-terms-and-person-like-traffic.md
+      - "0011 Not the default SMS app": docs/adr/0011-not-the-default-sms-app-in-v1.md
+      - "0012 Daily budget": docs/adr/0012-daily-segment-budget.md
+      - "0013 Optional Z85G": docs/adr/0013-optional-z85g.md
+  - Contributing:
+      - Contributing: CONTRIBUTING.md
+      - Rules for changes: AGENTS.md
+      - Security: SECURITY.md
+      - Changelog: CHANGELOG.md

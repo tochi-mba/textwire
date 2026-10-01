@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 
 .PHONY: help doctor install check server-check vectors vectors-check android-check android-apk \
-	android-install simulate run clean
+	android-install simulate run clean site site-serve
 
 help: ## Show available targets
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -49,7 +49,13 @@ simulate: ## Browse from the terminal with a virtual phone and recorded pages
 run: ## Run the server
 	$(MAKE) -C server run
 
+site: ## Build the documentation site into build/site (strict: a broken link fails)
+	cd server && uv run python scripts/build_site.py
+
+site-serve: ## Serve the documentation site with live reload
+	cd server && uv run python scripts/build_site.py --serve
+
 clean: ## Remove build output
 	$(MAKE) -C server clean
-	rm -rf dist
+	rm -rf dist build
 	@if [ -x android/gradlew ] && command -v java >/dev/null 2>&1; then cd android && ./gradlew clean -q; fi
