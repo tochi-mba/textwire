@@ -24,11 +24,13 @@ page: fix it in the same pull request as whatever you came to do.
 | JDK 17 | the Android build | `java -version` | `winget install EclipseAdoptium.Temurin.17.JDK` | `sdk install java 17-tem` |
 | Android SDK platform 36 | the Android build | `echo $ANDROID_HOME` | Android command-line tools, then `sdkmanager "platforms;android-36" "build-tools;36.0.0"` | same |
 | adb | installing the app on a phone | `adb version` | comes with platform-tools | same |
+| Node.js 20+ | the tests of the dashboard's and the site's scripts | `node --version` | `winget install OpenJS.NodeJS.LTS` | package manager |
 
 On Windows run everything from Git Bash; the Makefiles and `tools/doctor.sh` are POSIX
 shell. The JDK and Android SDK are only needed for the Android half; without them
-`make check` skips it locally and says so (CI never skips). Android Studio is not required:
-the Gradle wrapper builds everything from the command line.
+`make check` skips it locally and says so (CI never skips). The same goes for Node.js and
+the two script tests. Android Studio is not required: the Gradle wrapper builds everything
+from the command line.
 
 ## 2. Clone and check the machine
 
@@ -135,6 +137,21 @@ Battery, Background usage limits, Never sleeping apps) so frames are received wh
 is in the background. Mute the server's number in the messaging app: frames show up there
 too (ADR-0011).
 
+The app wears the REX ink and signal colours, the same as the site and the dashboard, and
+has four screens, reached from the bar at the bottom:
+
+- **Home**: one field. Words search; something with a dot and no spaces opens as an address
+  (the Search and Open buttons force either). Replies in flight show as cards with a progress
+  bar, how many texts have arrived, how many times the app has asked again, and a Retry
+  button once it has given up. Pages that arrived are cards below; tap one to read it.
+- **Reader**: the page, with link numbers in brackets you can tap, and Previous and Next at
+  the bottom. While a page is on its way the controls wait and say so.
+- **Diagnostics**: whether permissions are granted and the server number is set, today's
+  texts and cost, a button that sends `?`, and every text in and out with what the app made
+  of it. This is where the route probe (ACCEPTANCE.md line 10) is read.
+- **Settings**: the server number, texts per page and the price used for the estimate, each
+  validated as you type; a first-run guide until the number is set; the About card.
+
 Line by line, [ACCEPTANCE.md](ACCEPTANCE.md) is the checklist a change to the app or the
 protocol is tested against on the device.
 
@@ -146,6 +163,7 @@ cd server && uv run python -P -m pytest tests/protocol -q     # a slice while yo
 cd server && uv run ruff format . && uv run ruff check --fix .  # tidy
 cd android && ./gradlew ktlintFormat         # tidy Kotlin
 make vectors                                 # after any wire-format change; commit the diff
+make site                                    # the Pages site into build/site, links checked
 ```
 
 Run the full server suite in the background on Windows and keep working; and never edit a

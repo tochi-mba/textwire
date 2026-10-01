@@ -6,12 +6,15 @@ no Twilio account and no phone, and anything that needs those is marked and run 
 
 | Layer | Where | Runs in | Proves |
 | --- | --- | --- | --- |
-| Unit | `server/tests/**`, `android/*/src/test/**` | `make check`, CI | Each module does what its docstring says, at 100% line and branch coverage on the server and the pure-Kotlin modules (ADR-0009). |
+| Unit | `server/tests/**`, `android/*/src/test/**` | `make check`, CI | Each module does what its docstring says, at 100% line and branch coverage on the server, the pure-Kotlin modules and the app's logic (ADR-0009). |
 | Property | the `hypothesis` tests among the unit tests | `make check`, CI | Round trips hold for every input: frames, alphabets, envelopes, requests, pagination, plain splitting, GSM-7 sanitising. |
 | Golden vectors | `protocol/vectors/`, `server/tests/vectors/`, `android/protocol/src/test/` | `make check`, CI | Python and Kotlin agree on every byte of the wire format, and the committed files match the reference (`make vectors-check`). |
 | End to end, in process | `server/tests/simulate/`, `server/tests/service/test_dispatcher.py` | `make check`, CI | The real server, the real pipeline and the virtual phone agree over the fake transport: searches, pages, links, plain mode, dropped frames and resends, both alphabets. |
 | Contract | `server/tests/transport/test_twilio.py` | `make check`, CI | The Twilio client sends the right requests and reads the fields the server depends on, against recorded response shapes. |
 | Repository rules | `server/tests/test_repo_rules.py` | `make check`, CI | File sizes, no coverage pragmas, versions agree, every ADR is indexed, every internal link in the docs resolves. |
+| Screens | `android/app/src/test/**/ui/UiTest.kt` | `make check`, CI | Every screen of the app does what a person expects, at the Galaxy S21 Ultra's screen size and again on a small phone, where every control must still be reachable. |
+| Browser scripts | `server/tests/js/`, run by `server/tests/test_javascript.py` | `make check`, CI | The dashboard's script and the site's `app.js`, run in Node against a stand-in page: what a phone texted is escaped, the budget bar, the probe form, the menu, the Copy buttons. |
+| The site | `server/tests/test_check_site.py`, `server/tests/test_site.py` | `make check`, CI | The landing page has no broken anchor, link, asset or Copy button and no draft text; the handbook builds strictly; every link from one into the other resolves. |
 | Live | `server/tests/live/` (marker `live`) | by hand, `make -C server test-live` | One real SMS reaches a real phone through a real account. Costs money; never in CI. |
 | Device acceptance | [ACCEPTANCE.md](ACCEPTANCE.md) | by hand, on the phone | What only a real route can show: latency, delivery, the alphabet probe, background receipt, recovery after a kill. |
 
@@ -40,10 +43,16 @@ cd android
 ./gradlew ktlintFormat          # fix layout before ktlintCheck complains
 ```
 
-`:protocol` and `:core` are held at 100% line and branch by JaCoCo; `:app` is measured and
-reported in `app/build/reports/jacoco/`. Compose UI and Android glue are tested with
-Robolectric and Compose UI tests; they are not floored, because over Robolectric JaCoCo
-measures the framework more than the code (ADR-0009).
+`:protocol` and `:core` are held at 100% line and branch by JaCoCo. In `:app`, everything
+outside the `ui` package is held at 100% line and branch too, and the Compose screens at 99%
+of lines (ADR-0009 says which four lines no test can reach, and why screens carry no branch
+floor). The report is `app/build/reports/jacoco/jacocoAppReport/html/index.html`.
+
+The app's tests run under Robolectric at the Galaxy S21 Ultra's screen size
+(`app/src/test/resources/robolectric.properties`). One test repeats the important controls
+on a 320 by 480 phone, where they must still be reachable by scrolling. `MainActivityTest`
+drives the real activity over the real application, including the permission dialog's
+answer; `SmsTest` feeds the receiver real SMS-DELIVER PDUs.
 
 ## How the fakes work
 
@@ -113,3 +122,28 @@ TEXTWIRE_LIVE_TARGET=+447700900123 make -C server test-live
 ```
 
 Record the result, the date and the cost in [ACCEPTANCE.md](ACCEPTANCE.md).
+
+## The browser scripts
+
+Two pieces of JavaScript ship: the script inside the dashboard page
+(`server/src/textwire/api/dashboard.py`) and the landing page's `site/app.js`. Neither has a
+build step, so their tests have none either: `server/tests/js/dom.mjs` is a small stand-in
+for the parts of a page they touch, and the tests use only `node:test`.
+
+```sh
+cd server
+uv run python -P -m pytest tests/test_javascript.py -q    # as the suite runs them
+```
+
+`test_javascript.py` cuts the script out of the page the server really serves, so the test
+cannot drift from what ships. Without Node the two tests skip locally and say so; in CI a
+missing Node is a failure.
+
+## The site
+
+`make site` builds the whole GitHub Pages site into `build/site`: MkDocs writes the handbook
+into `build/site/handbook`, the files in `site/` are copied in beside it, and
+`server/scripts/check_site.py` checks the result. The same checker runs on `site/` alone in
+the test suite, where links into the handbook are taken on trust because the handbook is not
+built yet. To look at the result, `python -m http.server -d build/site` and open the address
+it prints; `make site-serve` serves the handbook alone with live reload.
