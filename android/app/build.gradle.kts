@@ -3,6 +3,13 @@ plugins {
     id("textwire.compose")
 }
 
+textwire {
+    // Everything outside ui/ is covered completely. On the screens, the only lines no test can
+    // reach are the closing braces of four exhaustive `when`s, where Kotlin emits a throw for a
+    // case that cannot exist: 4 lines in 457. See docs/adr/0009-coverage-floors.md.
+    appCoverageFloor(logicLine = 1.0, logicBranch = 1.0, screenLine = 0.99)
+}
+
 android {
     namespace = "com.rextechnologies.textwire"
 

@@ -27,7 +27,8 @@ machine ready.
 ## Definition of done for a change
 
 - [ ] `make check` is green locally and `ci-ok` is green on the pull request.
-- [ ] Coverage is still 100% line and branch on the server, `:protocol` and `:core`.
+- [ ] Coverage is still 100% line and branch on the server, `:protocol`, `:core` and the
+      app's logic, and a new control on a screen has a test that uses it.
 - [ ] If the wire format changed: vectors regenerated, `protocol/PROTOCOL.md` edited, both
       languages' vector tests pass.
 - [ ] If behaviour on a real phone changed: [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) rerun

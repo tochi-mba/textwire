@@ -22,7 +22,17 @@ All notable changes to this project are documented here. The format follows
 
 - The operator dashboard: `textwire serve` now serves a self-contained page at `http://127.0.0.1:8140/` with status, today's budget and cost, recent requests, held documents and a route-probe form, plus `/healthy`, `/ready` and `/api/overview`.
 - The documentation site: MkDocs Material over the repository's own Markdown, built strictly in CI and published to GitHub Pages from main.
+- The GitHub Pages site now opens on a landing page in the REX ink and signal style (`site/`), with the documentation beside it as the handbook under `/handbook/`. A checker fails the build on a broken anchor, link, asset or Copy button, on draft text, and on any link from the landing page into the handbook that does not resolve.
+- The Android app redesigned on Material 3 in the REX palette: a bottom bar of four destinations, one field on Home that searches words and opens addresses, progress cards for replies in flight, a reader with Previous and Next, a diagnostics checklist, a settings form validated as you type, and a first-run guide.
+- The dashboard restyled in the same palette, with labelled controls, a budget meter screen readers can read, and tables that scroll on a narrow window.
+- Tests for the two browser scripts, run in Node from the server suite; UI tests at the phone's real screen size and on a small phone; tests of the real activity, the settings store and the SMS receiver with real PDUs; `make doctor` tested against stand-in tools.
+- Coverage floors on the app module: 100% line and branch on everything outside the screens, 99% of lines on the screens (ADR-0009, revised).
+
+### Changed
+
+- Links in the handbook to files it does not publish (source code, `.env.example`) lead to the file on GitHub instead of nowhere.
 
 ### Fixed
 
+- Retry on a stalled next-page, link, status or help request asked for nothing and dropped the request; it now asks again in the same words under a fresh tag.
 - Delivery-status retries now reserve budget before sending and retry each message only once.

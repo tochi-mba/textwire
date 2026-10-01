@@ -18,7 +18,7 @@ here. A test fails if a record is missing from this table or a number is skipped
 | [0006](0006-standalone-repo-with-family-conventions.md) | A standalone repository that copies the LUCY family conventions | Accepted |
 | [0007](0007-requests-are-plain-text.md) | Requests are plain text, and `!` answers in plain text | Accepted |
 | [0008](0008-numbered-link-chips.md) | Links become numbered chips; the server keeps the URLs | Accepted |
-| [0009](0009-coverage-floors.md) | 100% coverage on the server, `:protocol` and `:core`; `:app` measured | Accepted |
+| [0009](0009-coverage-floors.md) | 100% coverage on the server and on all Kotlin logic; screens held by line | Accepted |
 | [0010](0010-carrier-terms-and-person-like-traffic.md) | The phone only ever sends what a person would | Accepted |
 | [0011](0011-not-the-default-sms-app-in-v1.md) | Not the default SMS app in v1; minSdk 31 | Accepted |
 | [0012](0012-daily-segment-budget.md) | A hard daily segment budget with a cost meter | Accepted |

@@ -47,9 +47,9 @@ the full picture and [protocol/PROTOCOL.md](protocol/PROTOCOL.md) has the wire f
    and the stores on the phone. No mocking libraries on the server.
 5. **Secrets come from the environment only.** `server/.env` is gitignored. Logs never carry
    an auth token and show phone numbers masked (`+44...1234`).
-6. **Coverage floors are never lowered.** The server and the Kotlin `:protocol` and `:core`
-   modules are held at 100% line and branch coverage. `pragma: no cover` fails review and a
-   test.
+6. **Coverage floors are never lowered.** The server, the Kotlin `:protocol` and `:core`
+   modules and the app's logic are held at 100% line and branch coverage; the app's Compose
+   screens at 99% of lines (ADR-0009). `pragma: no cover` fails review and a test.
 7. **Money is an operator setting.** Never raise `TEXTWIRE_DAILY_SEGMENT_BUDGET` or the page
    size defaults in code to make something pass. Every outbound SMS is charged to the budget
    before it is sent.
