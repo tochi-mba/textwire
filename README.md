@@ -33,7 +33,9 @@ make install    # the server's virtualenv
 make check      # every gate CI runs
 ```
 
-[docs/ONBOARDING.md](docs/ONBOARDING.md) is the full walkthrough.
+[docs/ONBOARDING.md](docs/ONBOARDING.md) is the full walkthrough. `make run` starts the server
+and its dashboard at `http://127.0.0.1:8140/`; `make simulate` runs the whole system in your
+terminal with no phone and no account.
 
 ## Repository
 

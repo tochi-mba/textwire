@@ -20,6 +20,9 @@ All notable changes to this project are documented here. The format follows
 - The shared dictionary is now 880 KiB, trained at four sizes with the best held-out result kept: 3.25x on unseen pages against 2.88x before.
 - Documentation: optimisation analysis with measured numbers, operations guide with a runbook, glossary, FAQ, expanded onboarding and testing guides.
 
+- The operator dashboard: `textwire serve` now serves a self-contained page at `http://127.0.0.1:8140/` with status, today's budget and cost, recent requests, held documents and a route-probe form, plus `/healthy`, `/ready` and `/api/overview`.
+- The documentation site: MkDocs Material over the repository's own Markdown, built strictly in CI and published to GitHub Pages from main.
+
 ### Fixed
 
 - Delivery-status retries now reserve budget before sending and retry each message only once.

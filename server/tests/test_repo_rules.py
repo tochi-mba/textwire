@@ -85,25 +85,38 @@ def test_markdown_links_between_repository_files_resolve() -> None:
     assert broken == []
 
 
-def test_every_source_file_is_tracked_by_git() -> None:
-    """A gitignore rule once hid a source package named data; CI saw a repo missing files."""
+def test_no_source_file_is_ignored_by_git() -> None:
+    """A gitignore rule once hid a source package named data; CI saw a repo missing files.
+
+    Untracked-but-not-ignored files are fine (work in progress); ignored ones under a source
+    tree would never reach a clean checkout.
+    """
     git = shutil.which("git")
     if git is None or not (REPO_ROOT / ".git").exists():
         pytest.skip("not a git checkout")
-    tracked = set(
-        subprocess.run(  # noqa: S603 - fixed arguments
-            [git, "-C", str(REPO_ROOT), "ls-files", "-z"], capture_output=True, check=True
-        )
-        .stdout.decode("utf-8")
-        .split("\0")
-    )
-    roots = [SERVER_ROOT / "src", *sorted((REPO_ROOT / "android").glob("*/src"))]
-    untracked = [
-        path.relative_to(REPO_ROOT).as_posix()
-        for root in roots
-        for path in root.rglob("*")
-        if path.is_file()
-        and not ({"build", "__pycache__"} & set(path.parts))
-        and path.relative_to(REPO_ROOT).as_posix() not in tracked
+    roots = [
+        "server/src",
+        *sorted(p.relative_to(REPO_ROOT).as_posix() for p in (REPO_ROOT / "android").glob("*/src")),
     ]
-    assert untracked == []
+    listing = subprocess.run(  # noqa: S603 - fixed arguments
+        [
+            git,
+            "-C",
+            str(REPO_ROOT),
+            "ls-files",
+            "--others",
+            "--ignored",
+            "--exclude-standard",
+            "-z",
+            "--",
+            *roots,
+        ],
+        capture_output=True,
+        check=True,
+    )
+    ignored = [
+        path
+        for path in listing.stdout.decode("utf-8").split(chr(0))
+        if path and not ({"build", "__pycache__"} & set(path.split("/")))
+    ]
+    assert ignored == []

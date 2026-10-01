@@ -98,10 +98,10 @@ class Dispatcher:
             # A bug in handling one request must not stop the server answering the next.
             log.exception("handling failed", extra={"sender": mask_number(message.sender)})
             replies = []
-        await self.send_all(replies)
+        await self.send_all(replies, reply_to=message.id)
         self._store.mark_handled(message.id, self._clock.now())
 
-    async def send_all(self, replies: list[Reply]) -> None:
+    async def send_all(self, replies: list[Reply], reply_to: str | None = None) -> None:
         """Send replies in order, skipping any frames the debug setting says to drop once."""
         dropped: frozenset[int] = frozenset()
         encoded = [reply for reply in replies if reply.seq is not None]
@@ -111,11 +111,11 @@ class Dispatcher:
             if reply.seq in dropped:
                 log.warning("debug: dropped a frame on purpose", extra={"seq": reply.seq})
                 continue
-            await self._send(reply)
+            await self._send(reply, reply_to)
             if self._gap and index < len(replies) - 1:
                 await self._clock.sleep(self._gap)
 
-    async def _send(self, reply: Reply) -> SentMessage | None:
+    async def _send(self, reply: Reply, reply_to: str | None = None) -> SentMessage | None:
         attempt = 0
         while True:
             try:
@@ -130,7 +130,9 @@ class Dispatcher:
                 await self._clock.sleep(2.0**attempt)
                 attempt += 1
                 continue
-            self._store.record_outbound(sent, tag=reply.tag, seq=reply.seq, at=self._clock.now())
+            self._store.record_outbound(
+                sent, tag=reply.tag, seq=reply.seq, at=self._clock.now(), reply_to=reply_to
+            )
             return sent
 
     async def sweep(self) -> None:

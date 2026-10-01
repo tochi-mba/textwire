@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING
 
 from textwire.content.document import Document
 from textwire.protocol.envelope import Kind
+from textwire.protocol.tags import encode_tag
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -69,7 +70,8 @@ CREATE TABLE IF NOT EXISTS outbound (
     status TEXT NOT NULL,
     price REAL,
     price_unit TEXT,
-    retried INTEGER NOT NULL DEFAULT 0
+    retried INTEGER NOT NULL DEFAULT 0,
+    reply_to TEXT
 );
 CREATE TABLE IF NOT EXISTS budget_days (
     day TEXT PRIMARY KEY,
@@ -86,6 +88,31 @@ class StoredDocument:
 
     id: int
     document: Document
+    page_size: int
+    plain: bool
+
+
+@dataclass(frozen=True, slots=True)
+class InboundSummary:
+    """An inbound message as the dashboard lists it."""
+
+    id: str
+    number: str
+    body: str
+    received_at: str
+    handled_at: str | None
+    replies: int
+
+
+@dataclass(frozen=True, slots=True)
+class DocumentSummary:
+    """A stored document as the dashboard lists it."""
+
+    tag: str
+    number: str
+    kind: str
+    title: str
+    created_at: str
     page_size: int
     plain: bool
 
@@ -227,14 +254,69 @@ class Store:
     # Outbound -------------------------------------------------------------------------------
 
     def record_outbound(
-        self, sent: SentMessage, *, tag: int | None, seq: int | None, at: datetime
+        self,
+        sent: SentMessage,
+        *,
+        tag: int | None,
+        seq: int | None,
+        at: datetime,
+        reply_to: str | None = None,
     ) -> None:
         """Remember a sent message so its delivery and price can be followed."""
         self._db.execute(
-            "INSERT OR REPLACE INTO outbound (id, number, tag, seq, body, sent_at, status)"
-            " VALUES (?, ?, ?, ?, ?, ?, 'queued')",
-            (sent.id, sent.recipient, tag, seq, sent.text, _stamp(at)),
+            "INSERT OR REPLACE INTO outbound"
+            " (id, number, tag, seq, body, sent_at, status, reply_to)"
+            " VALUES (?, ?, ?, ?, ?, ?, 'queued', ?)",
+            (sent.id, sent.recipient, tag, seq, sent.text, _stamp(at), reply_to),
         )
+
+    def outbound_on(self, day: date) -> int:
+        """How many messages were sent on ``day``."""
+        row = self._db.execute(
+            "SELECT count(*) FROM outbound WHERE substr(sent_at, 1, 10) = ?", (day.isoformat(),)
+        ).fetchone()
+        return int(row[0])
+
+    def recent_inbound(self, limit: int) -> list[InboundSummary]:
+        """The newest inbound messages with how many replies each one got."""
+        rows = self._db.execute(
+            "SELECT i.id, i.number, i.body, i.received_at, i.handled_at,"
+            " (SELECT count(*) FROM outbound o WHERE o.reply_to = i.id) AS replies"
+            " FROM inbound i ORDER BY i.received_at DESC, i.id DESC LIMIT ?",
+            (limit,),
+        )
+        return [
+            InboundSummary(
+                row["id"],
+                row["number"],
+                row["body"],
+                row["received_at"],
+                row["handled_at"],
+                int(row["replies"]),
+            )
+            for row in rows
+        ]
+
+    def recent_documents(self, limit: int) -> list[DocumentSummary]:
+        """The newest documents with the tag of the first response that produced each."""
+        rows = self._db.execute(
+            "SELECT d.number, d.kind, d.title, d.created_at, d.page_size, d.plain,"
+            " (SELECT min(r.tag) FROM responses r WHERE r.document_id = d.id) AS tag"
+            " FROM documents d ORDER BY d.created_at DESC, d.id DESC LIMIT ?",
+            (limit,),
+        )
+        return [
+            DocumentSummary(
+                tag=encode_tag(int(row["tag"])) if row["tag"] is not None else "",
+                number=row["number"],
+                kind=Kind(row["kind"]).name.lower(),
+                title=row["title"],
+                created_at=row["created_at"],
+                page_size=int(row["page_size"]),
+                plain=bool(row["plain"]),
+            )
+            for row in rows
+        ]
 
     def pending_outbound(self, since: datetime) -> list[OutboundRow]:
         """Messages sent since ``since`` whose status can still change."""
