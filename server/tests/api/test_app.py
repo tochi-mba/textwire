@@ -94,7 +94,8 @@ async def test_the_dashboard_is_self_contained_html(wired: tuple[AsyncClient, Co
     http, _ = wired
     page = await http.get("/")
     assert page.headers["content-type"].startswith("text/html")
-    assert "<title>textwire</title>" in page.text
+    assert "<title>textwire dashboard - REX Technologies</title>" in page.text
+    assert "https://" not in page.text
     assert "/api/overview" in page.text
     assert "http://" not in page.text.replace("http://test", "")
     assert "<script src" not in page.text
