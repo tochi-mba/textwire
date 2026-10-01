@@ -51,4 +51,4 @@ import-linter enforces these rules in `make check`.
 | --- | --- |
 | `:protocol` | Pure Kotlin: `FrameCodec` (both alphabets), `Tags`, `Requests` (canonical formatting), `Envelope` (unpacking and `joinFrames`), `Compression` (zstd with the packaged dictionary). Tested against the shared golden vectors. |
 | `:core` | Pure Kotlin: `Conversation` (the per-response state machine of PROTOCOL.md section 8: frames in, resend requests and give-up out, clock passed in), `TagAllocator`, `Markdown` (document text to blocks and chips), `CostMeter`. |
-| `:app` | Android: the SMS receiver and sender, SQLite storage, the resend worker, and the Compose UI. |
+| `:app` | Android: `sms` (a manifest-registered receiver that hands frames to the controller, and the `SmsManager` gateway), `data` (`Storage` on SQLite and `SettingsStore` on SharedPreferences), `work` (a WorkManager job that ticks conversations so resends go out with the UI dead), `Controller` (hand-wired, owns the open conversations and the `StateFlow` the screens draw), `ui` (home, reader with tappable chips, diagnostics, settings). `TextwireApp` builds the one controller the activity, receiver and worker share. |

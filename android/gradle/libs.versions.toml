@@ -30,8 +30,10 @@ compose-bom = "2026.05.00"
 
 coroutines = "1.11.0"
 # The compressed pages' decoder. The plain jar carries desktop natives for the JVM tests; the AAR
-# carries Android natives for the app. Same classes, same version.
-zstd-jni = "1.5.7-20"
+# carries Android natives for the app. Same classes, same version. Releases from 1.5.7-7 on
+# publish an AAR that demands compile SDK 37, which the SDK repository does not offer yet; 1.5.7-6
+# is the newest whose AAR builds against 36, and it is the same zstd 1.5.7 core.
+zstd-jni = "1.5.7-6"
 
 junit = "4.13.2"
 robolectric = "4.17"
@@ -53,6 +55,7 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
