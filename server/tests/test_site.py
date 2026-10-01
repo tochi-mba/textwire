@@ -63,6 +63,32 @@ def test_links_to_the_readme_point_at_the_front_page(tmp_path: Path) -> None:
     assert "](docs/ONBOARDING.md)" in (into / "index.md").read_text(encoding="utf-8")
 
 
+def test_links_to_files_the_site_does_not_publish_point_at_github(tmp_path: Path) -> None:
+    into = tmp_path / "site-src"
+    scripts.stage(REPO_ROOT, into)
+    operations = (into / "docs" / "OPERATIONS.md").read_text(encoding="utf-8")
+    assert "](https://github.com/tochi-mba/textwire/blob/main/server/.env.example)" in operations
+    assert "](../server/.env.example)" not in operations
+
+
+def test_the_stylesheet_and_the_icon_the_handbook_uses_are_staged(tmp_path: Path) -> None:
+    into = tmp_path / "site-src"
+    scripts.stage(REPO_ROOT, into)
+    config = (REPO_ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+    for asset in ("docs/stylesheets/rex.css", "site/favicon.svg"):
+        assert asset in config
+        assert (into / asset).is_file()
+
+
+def test_the_landing_page_is_copied_beside_the_handbook(tmp_path: Path) -> None:
+    out = tmp_path / "out"
+    (out / "handbook").mkdir(parents=True)
+    names = scripts.assemble(REPO_ROOT / "site", out)
+    assert {"index.html", "404.html", "styles.css", "app.js", ".nojekyll"} <= set(names)
+    assert all((out / name).is_file() for name in names)
+    assert (out / "handbook").is_dir()
+
+
 def test_staging_replaces_a_previous_copy(tmp_path: Path) -> None:
     into = tmp_path / "site-src"
     into.mkdir()
@@ -90,9 +116,48 @@ def test_build_runs_mkdocs(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> N
         calls.append(command)
         return Done()
 
+    def handbook(command: list[str], **kwargs: object) -> Done:
+        (out / "handbook" / "docs" / "ONBOARDING").mkdir(parents=True, exist_ok=True)
+        return fake_run(command, **kwargs)
+
+    out = tmp_path / "out"
+    stale = out / "stale.html"
+    stale.parent.mkdir()
+    stale.write_text("old", encoding="utf-8")
     monkeypatch.setattr(scripts, "STAGE", tmp_path / "staged")
-    monkeypatch.setattr(scripts.subprocess, "run", fake_run)
-    assert scripts.main([]) == 0
+    monkeypatch.setattr(scripts, "OUT", out)
+    monkeypatch.setattr(scripts.subprocess, "run", handbook)
+    # The assembled site is checked with nothing taken on trust: the handbook this fake
+    # "built" has none of the pages the landing page links to, and the build says so.
+    assert scripts.main([]) == 1
+    assert not stale.exists()
+    assert (out / "index.html").is_file()
     assert scripts.main(["--serve"]) == 0
     assert [command[-2] for command in calls] == ["build", "serve"]
     assert all(command[-1] == "--strict" for command in calls)
+
+
+def test_a_failed_handbook_build_stops_before_the_landing_page(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    class Failed:
+        returncode = 3
+
+    monkeypatch.setattr(scripts, "STAGE", tmp_path / "staged")
+    monkeypatch.setattr(scripts, "OUT", tmp_path / "out")
+    monkeypatch.setattr(scripts.subprocess, "run", lambda *_args, **_kwargs: Failed())
+    assert scripts.main([]) == 3
+    assert not (tmp_path / "out").exists()
+
+
+def test_a_sound_assembled_site_passes(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    class Done:
+        returncode = 0
+
+    out = tmp_path / "out"
+    monkeypatch.setattr(scripts, "STAGE", tmp_path / "staged")
+    monkeypatch.setattr(scripts, "OUT", out)
+    monkeypatch.setattr(scripts.subprocess, "run", lambda *_args, **_kwargs: Done())
+    monkeypatch.setattr(scripts.check_site, "check", lambda *_args, **_kwargs: [])
+    assert scripts.main([]) == 0
+    assert (out / ".nojekyll").is_file()

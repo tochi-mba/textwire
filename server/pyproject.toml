@@ -99,7 +99,7 @@ max-returns = 8
 [tool.mypy]
 python_version = "3.12"
 files = ["src", "tests", "scripts"]
-mypy_path = ["src"]
+mypy_path = ["src", "scripts"]
 explicit_package_bases = true
 strict = true
 warn_unreachable = true

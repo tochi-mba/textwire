@@ -49,10 +49,10 @@ simulate: ## Browse from the terminal with a virtual phone and recorded pages
 run: ## Run the server
 	$(MAKE) -C server run
 
-site: ## Build the documentation site into build/site (strict: a broken link fails)
+site: ## Build the Pages site (landing page and handbook) into build/site; a broken link fails
 	cd server && uv run python scripts/build_site.py
 
-site-serve: ## Serve the documentation site with live reload
+site-serve: ## Serve the handbook with live reload
 	cd server && uv run python scripts/build_site.py --serve
 
 clean: ## Remove build output
