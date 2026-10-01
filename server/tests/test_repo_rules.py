@@ -120,3 +120,16 @@ def test_no_source_file_is_ignored_by_git() -> None:
         if path and not ({"build", "__pycache__"} & set(path.split("/")))
     ]
     assert ignored == []
+
+
+def test_every_action_in_a_workflow_is_pinned_to_a_commit() -> None:
+    """A tag can be moved to different code; a commit cannot. Dependabot proposes the bumps."""
+    workflows = sorted((REPO_ROOT / ".github").rglob("*.yml"))
+    assert workflows
+    loose = [
+        f"{workflow.relative_to(REPO_ROOT).as_posix()}: {use}"
+        for workflow in workflows
+        for use in re.findall(r"uses:\s*(\S+)", workflow.read_text(encoding="utf-8"))
+        if not use.startswith("./") and not re.fullmatch(r"[\w./-]+@[0-9a-f]{40}", use)
+    ]
+    assert loose == []

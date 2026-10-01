@@ -36,6 +36,7 @@ need make make "install GNU Make (winget install ezwinports.make)"
 need uv uv "install uv (winget install astral-sh.uv, or https://docs.astral.sh/uv/)"
 want java java "install JDK 17 for the Android build (winget install EclipseAdoptium.Temurin.17.JDK)"
 want adb adb "install Android platform-tools to put the app on a phone"
+want node node "install Node.js to run the browser scripts' tests (winget install OpenJS.NodeJS.LTS)"
 
 if command -v java >/dev/null 2>&1; then
     version=$(java -version 2>&1 | head -n 1)
