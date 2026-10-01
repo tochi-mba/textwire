@@ -103,7 +103,7 @@ def test_every_source_file_is_tracked_by_git() -> None:
         for root in roots
         for path in root.rglob("*")
         if path.is_file()
-        and "build" not in path.parts
+        and not ({"build", "__pycache__"} & set(path.parts))
         and path.relative_to(REPO_ROOT).as_posix() not in tracked
     ]
     assert untracked == []
