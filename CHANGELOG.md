@@ -14,6 +14,7 @@ All notable changes to this project are documented here. The format follows
 - End-to-end checks for both encodings, plain replies and lost-frame recovery.
 - Kotlin frame codec verified against the same golden vectors as Python.
 - Kotlin envelope unpacking with the packaged dictionary, request formatting and tags, all pinned by the vectors; the `:core` module with the conversation state machine, tag allocator, Markdown parser and cost meter at 100% coverage.
+- The Android app: a manifest-registered SMS receiver, an SMS gateway, SQLite storage of requests, frames and pages, a WorkManager resend timer, a hand-wired controller, and four Compose screens (home, reader with tappable chips, diagnostics, settings). Tested with fakes, Robolectric and Compose UI tests, including a real SMS-DELIVER PDU.
 - Twilio transport: a small REST client, polling receiver, delivery status with real prices, and webhook signature helpers.
 - `textwire serve` runs the real server; `textwire probe` sends one frame with every byte value so a route can be checked.
 - The shared dictionary is now 880 KiB, trained at four sizes with the best held-out result kept: 3.25x on unseen pages against 2.88x before.
