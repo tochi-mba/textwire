@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import re
+import shutil
+import subprocess
 import tomllib
 from pathlib import Path
+
+import pytest
 
 from tests.conftest import REPO_ROOT, SERVER_ROOT
 from textwire import __version__
@@ -79,3 +83,27 @@ def test_markdown_links_between_repository_files_resolve() -> None:
             if not (document.parent / target).exists():
                 broken.append(f"{document.relative_to(REPO_ROOT)} -> {target}")
     assert broken == []
+
+
+def test_every_source_file_is_tracked_by_git() -> None:
+    """A gitignore rule once hid a source package named data; CI saw a repo missing files."""
+    git = shutil.which("git")
+    if git is None or not (REPO_ROOT / ".git").exists():
+        pytest.skip("not a git checkout")
+    tracked = set(
+        subprocess.run(  # noqa: S603 - fixed arguments
+            [git, "-C", str(REPO_ROOT), "ls-files", "-z"], capture_output=True, check=True
+        )
+        .stdout.decode("utf-8")
+        .split("\0")
+    )
+    roots = [SERVER_ROOT / "src", *sorted((REPO_ROOT / "android").glob("*/src"))]
+    untracked = [
+        path.relative_to(REPO_ROOT).as_posix()
+        for root in roots
+        for path in root.rglob("*")
+        if path.is_file()
+        and "build" not in path.parts
+        and path.relative_to(REPO_ROOT).as_posix() not in tracked
+    ]
+    assert untracked == []
