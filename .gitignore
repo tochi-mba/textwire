@@ -24,6 +24,9 @@ build/
 dist/
 *.egg-info/
 
+# The documentation site and its staging folder (make site)
+/build/
+
 # Dictionary training downloads (see protocol/dict/README.md)
 protocol/dict/cache/
 
