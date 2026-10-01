@@ -3,6 +3,8 @@
 *.env.local
 server/data/
 data/
+# The server's packaged copy of the shared dictionary is source, not state.
+!server/src/textwire/protocol/data/
 
 # Python
 __pycache__/
