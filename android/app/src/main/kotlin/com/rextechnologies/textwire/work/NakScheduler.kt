@@ -37,7 +37,7 @@ class WorkManagerNakScheduler(private val context: Context) : NakScheduler {
 /** The job: one tick of every open conversation. */
 class NakWorker(context: Context, parameters: WorkerParameters) : CoroutineWorker(context, parameters) {
     override suspend fun doWork(): Result {
-        (applicationContext as? TextwireApp)?.controller?.tick()
+        (applicationContext as TextwireApp).controller.tick()
         return Result.success()
     }
 }

@@ -39,7 +39,11 @@ class Conversation(
     private val nakRounds: Int = DEFAULT_NAK_ROUNDS,
 ) {
     private val frames = HashMap<Int, Frame>()
-    private var total: Int? = null
+
+    /** How many frames the reply has; unknown until the first one arrives. */
+    var total: Int? = null
+        private set
+
     private var lastFrameAtMillis = sentAtMillis
     private var resendsSent = 0
     private var quietSinceMillis = sentAtMillis

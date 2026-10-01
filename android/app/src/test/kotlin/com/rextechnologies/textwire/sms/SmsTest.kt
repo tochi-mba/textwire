@@ -5,7 +5,12 @@ import android.provider.Telephony
 import android.telephony.SmsMessage
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.work.Configuration
+import androidx.work.testing.WorkManagerTestInitHelper
+import com.rextechnologies.textwire.SERVER
 import com.rextechnologies.textwire.TextwireApp
+import com.rextechnologies.textwire.data.LogEntry
+import com.rextechnologies.textwire.data.SettingsSnapshot
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
@@ -68,6 +73,32 @@ class SmsTest {
         receiver.onReceive(app, Intent(Telephony.Sms.Intents.SMS_RECEIVED_ACTION))
         assertTrue(app.controller.state.value.log.isEmpty())
     }
+
+    @Test
+    fun `parts the radio left blank join as nothing`() {
+        val joined = joinParts(listOf(null to "a", "+447700900000" to "x", null to null, "+447700900000" to "y"))
+        assertEquals(listOf(IncomingSms("", "a"), IncomingSms("+447700900000", "xy")), joined)
+        assertEquals(emptyList(), joinParts(emptyList()))
+    }
+
+    @Test
+    fun `a broadcast from the radio reaches the controller, parts joined, strangers ignored`() {
+        val app = ApplicationProvider.getApplicationContext<TextwireApp>()
+        WorkManagerTestInitHelper.initializeTestWorkManager(app, Configuration.Builder().build())
+        app.controller.saveSettings(SettingsSnapshot(serverNumber = SERVER))
+        val receiver = SmsReceiver()
+        receiver.onReceive(app, smsReceived(deliverPdu(SERVER, "hello "), deliverPdu(SERVER, "there")))
+        receiver.onReceive(app, smsReceived(deliverPdu("+447700900999", "not the server")))
+        val entry = app.controller.state.value.log.single()
+        assertEquals(LogEntry.Direction.IN, entry.direction)
+        assertEquals("hello there", entry.text)
+        assertTrue(entry.note.startsWith("not a frame"))
+    }
+
+    /** The broadcast Android sends when texts arrive: raw PDUs and their format. */
+    private fun smsReceived(vararg pdus: ByteArray): Intent = Intent(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
+        .putExtra("pdus", arrayOf<Any>(*pdus))
+        .putExtra("format", "3gpp")
 
     private fun fakeMessage(sender: String, body: String): SmsMessage = SmsMessage.createFromPdu(
         deliverPdu(sender, body),
