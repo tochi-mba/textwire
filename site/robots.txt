@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://tochi-mba.github.io/textwire/sitemap.xml
+Sitemap: https://tochi-mba.github.io/textwire/handbook/sitemap.xml

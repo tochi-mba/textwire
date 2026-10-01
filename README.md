@@ -8,13 +8,16 @@ the page or runs the search on the real internet, reduces it to readable text, c
 with a trained zstd dictionary, and sends it back as numbered SMS frames. The app reassembles
 them, asks again for any that went missing, and shows a clean, tappable page.
 
-> **Status: under construction.** The build plan's phases land one pull request at a time;
-> [CHANGELOG.md](CHANGELOG.md) says what works today.
+**Site:** <https://tochi-mba.github.io/textwire/> (the landing page and the handbook).
 
-The offline terminal simulator is runnable now. From `server/`, use
-`uv run python -m textwire simulate --offline` and enter `s bbc weather london`.
-It runs the server and a virtual phone against recorded pages without sending SMS.
-The Android UI and live SMS adapter are still pending.
+> **Status: 0.1.0.** The server, the Android app and the wire format are built and tested end
+> to end in process, including lost and reordered texts. What has been seen on a real phone is
+> recorded only in [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md); a line there without a date has
+> not been observed yet. [CHANGELOG.md](CHANGELOG.md) says what changed.
+
+You can try it without a phone or an account: `make simulate`, then type
+`s bbc weather london`. That runs the real server and a virtual phone against recorded pages
+and sends no SMS.
 
 ## What it costs to run
 
@@ -44,6 +47,7 @@ terminal with no phone and no account.
 | [protocol/](protocol/PROTOCOL.md) | The wire format, golden vectors, dictionary and fixtures. |
 | [server/](server/README.md) | The Python server. |
 | `android/` | The Android app. |
+| `site/` | The landing page of the GitHub Pages site; the handbook beside it is built from this repository's Markdown. |
 | [docs/](docs/ARCHITECTURE.md) | Architecture, onboarding, operations, testing, acceptance, [optimisation](docs/OPTIMISATION.md), a [glossary](docs/GLOSSARY.md), a [FAQ](docs/FAQ.md), ADRs. |
 
 ## Licence

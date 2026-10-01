@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="textwire lets an Android phone with no data connection search and read the web over plain SMS. A server you run fetches the page, shrinks it, and texts it back. A REX Technologies product.">
+<meta name="robots" content="index,follow">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080A09">
+<meta property="og:title" content="textwire - the web over SMS - REX Technologies">
+<meta property="og:description" content="Search and read the web from a phone with unlimited texts and no data. Requests leave as SMS; pages come back as SMS.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tochi-mba.github.io/textwire/">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://tochi-mba.github.io/textwire/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.replace("no-js","js");</script>
+<noscript><style>@media(max-width:760px){.site-nav{display:flex!important;position:static!important;flex-direction:column}.menu-button{display:none!important}}</style></noscript>
+<title>textwire - the web over SMS - REX Technologies</title>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="ambient ambient-one" aria-hidden="true"></div>
+<div class="ambient ambient-two" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="#top" aria-label="textwire, by REX Technologies">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 8h20v13H15l-5 4v-4H6z"/><path d="M10 15h3l2-3 2 6 2-3h3"/></svg></span>
+      <span class="brand-lockup"><span class="brand-company">REX Technologies</span><span class="brand-name">textwire</span></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span></span><span></span></button>
+    <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+      <a href="#how">How it works</a>
+      <a href="#features">What you get</a>
+      <a href="#numbers">The numbers</a>
+      <a href="#install">Run it</a>
+      <a href="#faq">Questions</a>
+      <a href="handbook/">Handbook</a>
+      <a class="nav-github" href="https://github.com/tochi-mba/textwire">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero container" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow signal">Android app · self-hosted server</p>
+      <h1>The web, over <span>SMS</span>.</h1>
+      <p class="hero-lede">
+        A phone with unlimited texts and no data can still search and read the web. textwire
+        sends your request as a text to a number your own server owns. The server fetches the
+        page, strips it to readable text, compresses it, and texts it back. The app puts the
+        pieces together and shows a clean page you can tap through.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#install">Try it in your terminal</a>
+        <a class="button button-secondary" href="handbook/">Read the handbook</a>
+      </div>
+      <div class="hero-meta">
+        <span>No data connection on the phone</span>
+        <span>Android 12+</span>
+        <span>Python 3.12+</span>
+        <span>MIT licensed</span>
+      </div>
+    </div>
+    <pre class="console" aria-label="A search and a page, as the texts that carry them"><code><span class="you">phone ›</span> 00 s bbc weather london
+
+<span class="k">server</span>  4 texts, 160 characters each
+<span class="k">app</span>     1. London - BBC Weather[1]
+           Sunny intervals, 17° ...
+        2. London forecast - Met Office[2]
+
+<span class="you">phone ›</span> 01 l 00 1          <span class="s">tap [1]</span>
+
+<span class="k">server</span>  12 texts   <span class="s">text 7 lost</span>
+<span class="you">phone ›</span> 02 r 01 7          <span class="s">asks again</span>
+<span class="k">app</span>     page 1 of 3, ready to read</code></pre>
+  </section>
+
+  <section class="trust-strip">
+    <div class="container trust-grid">
+      <div><strong>Nothing but texts</strong><span>The app has no internet permission at all.</span></div>
+      <div><strong>Lost texts are asked for again</strong><span>Every text is numbered and checked.</span></div>
+      <div><strong>3.25× smaller</strong><span>A trained dictionary shrinks every page.</span></div>
+      <div><strong>A hard daily budget</strong><span>The server stops before a mistake gets expensive.</span></div>
+    </div>
+  </section>
+
+  <section class="section container" id="how">
+    <div class="section-heading">
+      <p class="eyebrow signal">How it works</p>
+      <h2>A request is one short text. A page is a dozen.</h2>
+      <p>Two halves and a wire format: an Android app, a server on a machine that has internet, and a <a href="handbook/protocol/PROTOCOL/">protocol</a> small enough to read in one sitting.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-number">01</span>
+        <h3>The phone asks</h3>
+        <p>A request is plain text a person could type: <code>s weather london</code> to search, <code>g bbc.co.uk/news</code> to open a page, <code>l 00 3</code> to follow link 3. It leaves as an ordinary SMS on the phone's own plan.</p>
+      </div>
+      <div class="step">
+        <span class="step-number">02</span>
+        <h3>The server fetches and shrinks</h3>
+        <p>It loads the page on the real internet, keeps the article and drops the rest, turns links into numbered chips, compresses the text, and cuts it into frames that each fit exactly one 160-character SMS.</p>
+      </div>
+      <div class="step">
+        <span class="step-number">03</span>
+        <h3>The app rebuilds the page</h3>
+        <p>Frames arrive in any order. Each carries its number and a checksum, so the app knows what is missing, asks for only those texts again, and shows the page when the last one lands.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" id="features">
+    <div class="section-heading">
+      <p class="eyebrow signal">What you get</p>
+      <h2>Built for a slow, paid, lossy wire.</h2>
+      <p>Every design choice follows from one fact: each text the server sends costs money and may not arrive.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card"><h3>Search and browse</h3><p>Search results come back as a numbered list. Tap a result, tap a link inside the article, turn to the next page. Each tap is a seven-character text.</p></div>
+      <div class="feature-card"><h3>Reader mode by default</h3><p>Navigation, adverts and scripts never leave the server. What arrives is the title, the headings and the words.</p></div>
+      <div class="feature-card"><h3>Pages on demand</h3><p>A long article is split into pages of twelve texts. You pay for page two only if you turn to it.</p></div>
+      <div class="feature-card"><h3>Works without the app</h3><p>Add <code>!</code> to any request and the reply is readable plain text, so any phone's messaging app can use the server.</p></div>
+      <div class="feature-card"><h3>An operator dashboard</h3><p>The server shows today's spend against the budget, every request it answered, and a one-button probe of the SMS route.</p></div>
+      <div class="feature-card"><h3>A simulator for developers</h3><p>The whole system runs in a terminal against recorded pages: no phone, no account, no texts sent.</p></div>
+      <div class="feature-card"><h3>Only your phones</h3><p>The server answers numbers on its allowlist and nobody else, and refuses to fetch private or local addresses.</p></div>
+      <div class="feature-card"><h3>One wire format, two languages</h3><p>Python generates golden test vectors; Kotlin must decode every one. The two halves cannot drift apart unnoticed.</p></div>
+      <div class="feature-card"><h3>Tested like it matters</h3><p>100% branch coverage on the server and on the app's protocol and state machine, enforced in CI.</p></div>
+    </div>
+  </section>
+
+  <section class="section container" id="numbers">
+    <div class="section-heading">
+      <p class="eyebrow signal">The numbers</p>
+      <h2>Measured, not guessed.</h2>
+      <p>The phone's requests ride on its text plan. The server pays for every reply, so the handbook's <a href="handbook/docs/OPTIMISATION/">optimisation notes</a> record what each technique saved, on pages held back from training.</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><span class="stat-value">160</span><span class="stat-label">characters in a frame: exactly one SMS, never a multi-part message</span></div>
+      <div class="stat"><span class="stat-value">3.25×</span><span class="stat-label">compression with the trained dictionary, against 2.18× without it</span></div>
+      <div class="stat"><span class="stat-value">12</span><span class="stat-label">texts in a default page, roughly 800 words of an article</span></div>
+      <div class="stat"><span class="stat-value">200</span><span class="stat-label">texts a day by default before the server refuses more</span></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <caption>What a reply costs through Twilio to a UK mobile, at $0.056 a text (September 2026)</caption>
+        <thead><tr><th scope="col">Reply</th><th scope="col">Texts</th><th scope="col">Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Status or help</td><td>1</td><td>$0.06</td></tr>
+          <tr><td>Search results, five hits</td><td>3 to 5</td><td>$0.17 to $0.28</td></tr>
+          <tr><td>One page of an article</td><td>12</td><td>$0.67</td></tr>
+          <tr><td>The number itself</td><td></td><td>$2.50 a month</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section container" id="install">
+    <div class="section-heading">
+      <p class="eyebrow signal">Run it</p>
+      <h2>See it work in a terminal first.</h2>
+      <p>You need <a href="https://docs.astral.sh/uv/">uv</a> and make. The simulator runs the real server and a virtual phone against recorded pages, so nothing is sent and nothing is charged.</p>
+    </div>
+    <ol class="install-steps">
+      <li>Clone the repository and see what the machine is missing.
+        <div class="command-row"><code>git clone https://github.com/tochi-mba/textwire.git &amp;&amp; cd textwire &amp;&amp; make doctor</code><button class="copy-button" type="button" data-copy="git clone https://github.com/tochi-mba/textwire.git && cd textwire && make doctor">Copy</button></div>
+      </li>
+      <li>Install the server's environment.
+        <div class="command-row"><code>make install</code><button class="copy-button" type="button" data-copy="make install">Copy</button></div>
+      </li>
+      <li>Browse from the terminal. Type <code>s bbc weather london</code>, then <code>l 1</code>.
+        <div class="command-row"><code>make simulate</code><button class="copy-button" type="button" data-copy="make simulate">Copy</button></div>
+      </li>
+      <li>For a real phone: put a Twilio number in <code>server/.env</code>, start the server and its dashboard, and install the app.
+        <div class="command-row"><code>make run</code><button class="copy-button" type="button" data-copy="make run">Copy</button></div>
+        <div class="command-row"><code>make android-install</code><button class="copy-button" type="button" data-copy="make android-install">Copy</button></div>
+      </li>
+    </ol>
+    <p class="install-note">The <a href="handbook/docs/ONBOARDING/">onboarding guide</a> walks through all of it, and the <a href="handbook/docs/OPERATIONS/">operations guide</a> covers buying the number, the budget and the dashboard.</p>
+    <p id="copy-status" class="sr-only" aria-live="polite"></p>
+  </section>
+
+  <section class="section container" id="faq">
+    <div class="section-heading">
+      <p class="eyebrow signal">Questions</p>
+      <h2>What people ask first.</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Is it really free on the phone?</summary>
+        <p>The phone only sends short requests, a few dozen a day, which an unlimited-text plan covers. The server pays for the replies: about $0.67 for a page through Twilio in the UK. The daily budget caps that, and both the app and the dashboard show a running total.</p>
+      </details>
+      <details>
+        <summary>How fast is it?</summary>
+        <p>Twilio releases about ten texts a second, so a page leaves the server in a second or two. How long the mobile network then takes to deliver them has not been measured on a handset yet. Either way it is for reading an article or looking something up, not for video or web apps.</p>
+      </details>
+      <details>
+        <summary>Has it run on a real phone?</summary>
+        <p>The server, the protocol and the app are tested end to end in process, including lost and reordered texts. Results on a real handset are recorded only in the <a href="handbook/docs/ACCEPTANCE/">acceptance checklist</a>, one dated line at a time; a line with no date has not been observed yet.</p>
+      </details>
+      <details>
+        <summary>Can anyone text my server?</summary>
+        <p>No. It answers only the numbers on its allowlist, and the daily budget is the ceiling on what a mistake or a spoofed sender could cost. SMS is not encrypted, so treat what you browse as visible to the carrier. The <a href="handbook/SECURITY/">security notes</a> say exactly what is and is not protected.</p>
+      </details>
+      <details>
+        <summary>Why not use carrier multi-part messages?</summary>
+        <p>A single SMS carries 160 characters; a part of a long message carries 153, and Android drops the whole message if one part is lost. textwire numbers its own frames, so one lost text costs one resend. The <a href="handbook/docs/adr/0002-a-frame-is-one-single-segment-sms/">decision record</a> has the detail.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="section container" id="docs">
+    <div class="section-heading">
+      <p class="eyebrow signal">Handbook</p>
+      <h2>Written so a new engineer is useful on day one.</h2>
+    </div>
+    <div class="feature-grid">
+      <a class="feature-card link" href="handbook/docs/ONBOARDING/"><h3>Onboarding</h3><p>From a clone to a first change, without a phone or an account.</p></a>
+      <a class="feature-card link" href="handbook/docs/ARCHITECTURE/"><h3>Architecture</h3><p>The two halves, the path of a request, and the rules that hold it together.</p></a>
+      <a class="feature-card link" href="handbook/protocol/PROTOCOL/"><h3>The protocol</h3><p>Frames, envelopes, requests and resends, byte by byte.</p></a>
+      <a class="feature-card link" href="handbook/docs/OPERATIONS/"><h3>Operations</h3><p>The number, the settings, the dashboard, and what to do when texts stop.</p></a>
+      <a class="feature-card link" href="handbook/docs/TESTING/"><h3>Testing</h3><p>Every layer of tests, what each one proves, and how to run it.</p></a>
+      <a class="feature-card link" href="handbook/docs/adr/"><h3>Decisions</h3><p>Every decision on record: what was chosen, why, and what it costs.</p></a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-wrap">
+    <span>© <span id="year">2026</span> REX Technologies · textwire</span>
+    <span>MIT licensed. Not affiliated with any carrier or SMS provider.</span>
+    <span class="footer-links">
+      <a href="handbook/CHANGELOG/">What's new <span aria-hidden="true">↗</span></a>
+      <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
+    </span>
+  </div>
+</footer>
+<script src="app.js" defer></script>
+</body>
+</html>

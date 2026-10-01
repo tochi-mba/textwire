@@ -1,18 +1,19 @@
-# The documentation site, published to GitHub Pages from main.
+# The handbook: the documentation half of the GitHub Pages site, published from main under
+# /handbook/ beside the landing page in site/.
 #
 # The pages are the repository's own Markdown, staged by server/scripts/build_site.py into
 # build/site-src with their paths preserved, so every relative link in the repository works
 # unchanged on the site and `mkdocs build --strict` fails on any that does not.
-site_name: textwire
-site_description: A text-mode web over SMS. A REX Technologies product.
-site_url: https://tochi-mba.github.io/textwire/
+site_name: textwire handbook
+site_description: How textwire works and how to run it. A REX Technologies product.
+site_url: https://tochi-mba.github.io/textwire/handbook/
 repo_url: https://github.com/tochi-mba/textwire
 repo_name: tochi-mba/textwire
 edit_uri: ""
 copyright: Copyright &copy; 2026 REX Technologies. MIT licence.
 
 docs_dir: build/site-src
-site_dir: build/site
+site_dir: build/site/handbook
 strict: true
 
 theme:
@@ -25,24 +26,24 @@ theme:
     - toc.follow
     - search.suggest
     - content.code.copy
+  # The REX ink/signal palette, dark by design; the colours are in docs/stylesheets/rex.css.
   palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: green
-      accent: light green
-      toggle:
-        icon: material/weather-night
-        name: Dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: green
-      accent: light green
-      toggle:
-        icon: material/weather-sunny
-        name: Light mode
+    scheme: slate
+    primary: custom
+    accent: custom
+  font:
+    text: Inter
+  logo: site/favicon.svg
+  favicon: site/favicon.svg
   icon:
-    logo: material/message-text-outline
     repo: fontawesome/brands/github
+
+extra_css:
+  - docs/stylesheets/rex.css
+
+extra:
+  # The logo leads back to the landing page; "Home" in the navigation is the handbook's front page.
+  homepage: https://tochi-mba.github.io/textwire/
 
 markdown_extensions:
   - admonition

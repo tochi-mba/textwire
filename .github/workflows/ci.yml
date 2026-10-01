@@ -33,6 +33,7 @@ jobs:
               - 'server/**'
               - 'protocol/**'
               - 'docs/**'
+              - 'site/**'
               - '*.md'
               - 'VERSION'
               - 'Makefile'
@@ -123,7 +124,7 @@ jobs:
           if-no-files-found: ignore
 
   docs:
-    name: Documentation site
+    name: Pages site
     needs: changes
     if: needs.changes.outputs.server == 'true'
     runs-on: ubuntu-latest
@@ -137,7 +138,7 @@ jobs:
           enable-cache: true
       - name: Install
         run: uv sync --group docs
-      - name: Build strictly (a broken link fails)
+      - name: Build the landing page and the handbook (a broken link fails)
         run: uv run python scripts/build_site.py
 
   # The one required check. It passes when every job that ran passed; a job skipped by the path

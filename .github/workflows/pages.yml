@@ -1,7 +1,9 @@
 name: Pages
 
-# The documentation site: the repository's own Markdown, built with MkDocs from main.
-# Pull requests build it too (in ci.yml) so a broken link never reaches here.
+# The GitHub Pages site, published from main: the landing page in site/ and, under
+# /handbook/, the repository's own Markdown built with MkDocs. build_site.py checks the
+# assembled result, and pull requests build it too (in ci.yml), so a broken link never
+# reaches here.
 
 on:
   push:
