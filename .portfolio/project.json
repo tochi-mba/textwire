@@ -1,0 +1,20 @@
+{
+  "$schema": "https://tochi-mba.github.io/schema/project.schema.json",
+  "slug": "textwire",
+  "name": "textwire",
+  "tagline": "Browse the web and search from a phone with no data connection, over plain SMS.",
+  "description": "The phone texts a request to a number the server owns. The server fetches the page or runs the search, reduces it to readable text, compresses it with a trained zstd dictionary and sends it back as numbered SMS frames. The app reassembles them, asks again for any that went missing, and shows a clean, tappable page. Built and tested end to end in process, including lost and reordered texts, and runnable with no phone and no account.",
+  "highlights": [
+    "Trained zstd dictionary and a framed wire format with golden vectors",
+    "Retransmission of lost and reordered SMS frames",
+    "make simulate runs the real server against a virtual phone, sends nothing",
+    "A hard daily SMS budget caps the cost of any mistake",
+    "Landing page and handbook built from the repository's own Markdown"
+  ],
+  "stack": ["Python", "Android", "Kotlin", "zstd", "Twilio"],
+  "category": "product",
+  "status": "active",
+  "featured": true,
+  "order": 50,
+  "display": true
+}
