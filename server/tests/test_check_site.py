@@ -104,14 +104,46 @@ def test_a_site_without_nojekyll_is_named(tmp_path: Path) -> None:
     assert problem.startswith("site/.nojekyll is missing")
 
 
+def _not_found(base: str = '<base href="/Thing/">') -> str:
+    return GOOD.replace('<meta name="description" content="A thing.">', base)
+
+
 def test_every_page_is_checked_not_only_the_index(tmp_path: Path) -> None:
     site = _site(tmp_path)
-    other = GOOD.replace("<title>Thing", "<title>Lost").replace(
-        '<meta name="description" content="A thing.">', ""
+    (site / "404.html").write_text(
+        _not_found().replace("<title>Thing", "<title>Lost"), encoding="utf-8"
     )
-    (site / "404.html").write_text(other, encoding="utf-8")
     # Only the front page needs a description; every page needs the product in its title.
     assert check_site.check(site, "Thing") == ["404.html: the title does not name Thing."]
+
+
+@pytest.mark.parametrize(
+    ("base", "sound"),
+    [
+        ('<base href="/Thing/">', True),
+        ('<base href="https://example.github.io/Thing/">', True),
+        ("", False),
+        ('<base href="./">', False),
+        ("<base>", False),
+    ],
+)
+def test_the_not_found_page_resolves_its_links_from_the_site_root(
+    tmp_path: Path, base: str, *, sound: bool
+) -> None:
+    site = _site(tmp_path)
+    (site / "404.html").write_text(_not_found(base), encoding="utf-8")
+    problems = check_site.check(site, "Thing")
+    assert problems == ([] if sound else [problems[0]])
+    if not sound:
+        assert problems[0].startswith("404.html: the not-found page has no <base> at the site root")
+
+
+def test_the_shipped_not_found_page_works_at_any_depth() -> None:
+    parser = check_site.PageParser()
+    parser.feed((check_site.SITE / "404.html").read_text(encoding="utf-8"))
+    # The canonical address of the landing page ends with the base: the site's root.
+    landing = (check_site.SITE / "index.html").read_text(encoding="utf-8")
+    assert f'<link rel="canonical" href="https://tochi-mba.github.io{parser.base}">' in landing
 
 
 def test_remote_assets_and_empty_sources_are_not_checked_for_existence(tmp_path: Path) -> None:
