@@ -128,10 +128,12 @@ class HttpxFetcher:
         user_agent: str,
         timeout_seconds: float,
         max_bytes: int,
+        max_redirects: int = MAX_REDIRECTS,
         resolver: Resolver | None = None,
         transport: httpx.AsyncBaseTransport | None = None,
     ) -> None:
         self._max_bytes = max_bytes
+        self._max_redirects = max_redirects
         self._resolver = resolver if resolver is not None else SystemResolver()
         self._client = httpx.AsyncClient(
             timeout=httpx.Timeout(timeout_seconds),
@@ -190,9 +192,9 @@ class HttpxFetcher:
         return b"".join(chunks)
 
     async def fetch(self, url: str) -> Fetched:
-        """The response for ``url`` after at most five checked redirects."""
+        """The response for ``url`` after at most ``max_redirects`` checked redirects."""
         current = url
-        for _ in range(MAX_REDIRECTS + 1):
+        for _ in range(self._max_redirects + 1):
             await self._check(current)
             try:
                 async with self._client.stream("GET", current) as response:

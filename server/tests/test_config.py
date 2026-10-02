@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from tests.conftest import PHONE, SERVER, SERVER_ROOT, build_settings
 from textwire.config import (
     InboundMode,
+    SafeSearch,
     Settings,
     TransportKind,
     check_for_unknown_env_vars,
@@ -23,6 +24,10 @@ def test_defaults_are_safe_to_run_with() -> None:
     assert settings.daily_segment_budget == 200
     assert settings.page_frames == 12
     assert settings.debug_drop_once == ()
+    assert settings.search_safesearch is SafeSearch.MODERATE
+    assert settings.search_snippet_chars == 160
+    assert settings.fetch_max_redirects == 5
+    assert settings.dashboard is True
 
 
 def test_allowed_numbers_are_read_as_a_comma_separated_list(
@@ -166,3 +171,39 @@ def test_the_example_environment_file_documents_every_setting() -> None:
     example = (SERVER_ROOT / ".env.example").read_text(encoding="utf-8")
     missing = [name for name in Settings.model_fields if f"TEXTWIRE_{name.upper()}=" not in example]
     assert missing == []
+
+
+@pytest.mark.parametrize("value", ["off", "moderate", "strict"])
+def test_safe_search_takes_the_three_levels(monkeypatch: pytest.MonkeyPatch, value: str) -> None:
+    monkeypatch.setenv("TEXTWIRE_SEARCH_SAFESEARCH", value)
+    assert Settings(_env_file=None).search_safesearch.value == value  # type: ignore[call-arg]
+
+
+def test_safe_search_refuses_anything_else() -> None:
+    with pytest.raises(ValidationError):
+        build_settings(search_safesearch="sometimes")
+
+
+@pytest.mark.parametrize("chars", [0, 20, 160, 300])
+def test_a_snippet_is_none_or_long_enough_to_read(chars: int) -> None:
+    assert build_settings(search_snippet_chars=chars).search_snippet_chars == chars
+
+
+@pytest.mark.parametrize(("chars", "said"), [(1, "too short"), (19, "too short"), (301, "300")])
+def test_a_snippet_too_short_to_read_or_too_long_is_refused(chars: int, said: str) -> None:
+    with pytest.raises(ValidationError, match=said):
+        build_settings(search_snippet_chars=chars)
+
+
+@pytest.mark.parametrize(("redirects", "valid"), [(0, True), (10, True), (-1, False), (11, False)])
+def test_redirects_are_bounded(redirects: int, *, valid: bool) -> None:
+    if valid:
+        assert build_settings(fetch_max_redirects=redirects).fetch_max_redirects == redirects
+    else:
+        with pytest.raises(ValidationError):
+            build_settings(fetch_max_redirects=redirects)
+
+
+def test_the_dashboard_can_be_switched_off(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TEXTWIRE_DASHBOARD", "false")
+    assert Settings(_env_file=None).dashboard is False  # type: ignore[call-arg]

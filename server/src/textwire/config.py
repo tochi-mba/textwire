@@ -39,6 +39,10 @@ DEFAULT_USER_AGENT = (
 #: The highest frame sequence number a response can have (255 frames, numbered from 0).
 MAX_SEQ = 254
 
+#: The longest search summary; the shortest that is not none.
+MAX_SNIPPET_CHARS = 300
+MIN_SNIPPET_CHARS = 20
+
 
 class LogFormat(StrEnum):
     """How log records are rendered."""
@@ -59,6 +63,14 @@ class InboundMode(StrEnum):
 
     POLL = "poll"
     WEBHOOK = "webhook"
+
+
+class SafeSearch(StrEnum):
+    """How strictly search results are filtered for explicit content."""
+
+    OFF = "off"
+    MODERATE = "moderate"
+    STRICT = "strict"
 
 
 PositiveInt = Annotated[int, Field(gt=0)]
@@ -123,9 +135,17 @@ class Settings(BaseSettings):
     search_region: str = "uk-en"
     search_backend: str = "auto"
     search_timeout_seconds: PositiveFloat = 20.0
+    search_safesearch: SafeSearch = SafeSearch.MODERATE
+    # Characters of each result's summary; 0 leaves summaries out, the cheapest search.
+    search_snippet_chars: Annotated[int, Field(ge=0, le=MAX_SNIPPET_CHARS)] = 160
     fetch_timeout_seconds: PositiveFloat = 20.0
     fetch_max_bytes: PositiveInt = 3_000_000
+    fetch_max_redirects: Annotated[int, Field(ge=0, le=10)] = 5
     user_agent: str = DEFAULT_USER_AGENT
+
+    # The operator's page at /. Off leaves only /healthy and /ready, for a host that is
+    # reachable from other machines.
+    dashboard: bool = True
 
     # Retention and rate limits
     retention_hours: PositiveInt = 24
@@ -168,6 +188,17 @@ class Settings(BaseSettings):
             if not 0 <= seq <= MAX_SEQ:
                 msg = f"TEXTWIRE_DEBUG_DROP_ONCE: {seq} is not a frame number from 0 to {MAX_SEQ}"
                 raise ValueError(msg)
+        return value
+
+    @field_validator("search_snippet_chars")
+    @classmethod
+    def _snippet_is_none_or_readable(cls, value: int) -> int:
+        if 0 < value < MIN_SNIPPET_CHARS:
+            msg = (
+                f"TEXTWIRE_SEARCH_SNIPPET_CHARS: {value} is too short to read; "
+                f"use 0 for no summaries or {MIN_SNIPPET_CHARS} to {MAX_SNIPPET_CHARS}"
+            )
+            raise ValueError(msg)
         return value
 
     @model_validator(mode="after")

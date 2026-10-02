@@ -36,11 +36,13 @@ def _fetcher(
     handler: Callable[[httpx.Request], httpx.Response],
     table: dict[str, list[str]] | None = None,
     max_bytes: int = 1000,
+    max_redirects: int = 5,
 ) -> HttpxFetcher:
     return HttpxFetcher(
         user_agent="textwire-test",
         timeout_seconds=5,
         max_bytes=max_bytes,
+        max_redirects=max_redirects,
         resolver=StaticResolver(table if table is not None else {"site.example": [PUBLIC]}),
         transport=httpx.MockTransport(handler),
     )
@@ -226,3 +228,28 @@ async def test_the_system_resolver_resolves_localhost() -> None:
     addresses = await SystemResolver().resolve("localhost")
     assert addresses
     assert not any(is_public_address(address) for address in addresses)
+
+
+def _chain(redirects: int) -> tuple[Callable[[httpx.Request], httpx.Response], list[str]]:
+    """A site that redirects ``redirects`` times before answering, and the paths it saw."""
+    hops: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        hops.append(request.url.path)
+        if len(hops) <= redirects:
+            return httpx.Response(302, headers={"location": f"/hop{len(hops)}"})
+        return httpx.Response(200, text="arrived", headers={"content-type": "text/plain"})
+
+    return handler, hops
+
+
+@pytest.mark.parametrize("allowed", [0, 1, 3])
+async def test_the_redirect_limit_is_a_setting(allowed: int) -> None:
+    handler, hops = _chain(allowed)
+    fetched = await _fetcher(handler, max_redirects=allowed).fetch("https://site.example/")
+    assert fetched.body == b"arrived"
+    assert len(hops) == allowed + 1
+    handler, _ = _chain(allowed + 1)
+    with pytest.raises(FetchError) as caught:
+        await _fetcher(handler, max_redirects=allowed).fetch("https://site.example/")
+    assert caught.value.fault is FetchFault.REDIRECTS

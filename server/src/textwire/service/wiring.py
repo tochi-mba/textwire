@@ -53,6 +53,7 @@ def default_fetcher(settings: Settings) -> HttpxFetcher:
         user_agent=settings.user_agent,
         timeout_seconds=settings.fetch_timeout_seconds,
         max_bytes=settings.fetch_max_bytes,
+        max_redirects=settings.fetch_max_redirects,
     )
 
 
@@ -62,6 +63,7 @@ def default_search(settings: Settings) -> DdgsSearchProvider:
         region=settings.search_region,
         backend=settings.search_backend,
         timeout_seconds=settings.search_timeout_seconds,
+        safesearch=settings.search_safesearch.value,
     )
 
 
@@ -91,6 +93,7 @@ def build_components(
         fetcher if fetcher is not None else default_fetcher(settings),
         search if search is not None else default_search(settings),
         search_results=settings.search_results,
+        snippet_chars=settings.search_snippet_chars,
     )
     handler = Handler(
         library=library,

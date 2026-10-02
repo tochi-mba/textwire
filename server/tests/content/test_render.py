@@ -60,3 +60,17 @@ def test_help_is_a_help_document() -> None:
     document = help_document()
     assert (document.kind, document.title, document.body) == (Kind.HELP, "textwire help", HELP_BODY)
     assert "s! weather london" in document.body
+
+
+def test_without_snippets_a_result_is_one_line() -> None:
+    document = search_document(
+        "q", [Hit("Title", "https://x.example", "a summary")], snippet_chars=0
+    )
+    assert document.body == "1. Title[1] (x.example)"
+
+
+def test_the_snippet_length_is_a_setting() -> None:
+    document = search_document("q", [Hit("t", "https://x.example", "word " * 60)], snippet_chars=40)
+    snippet = document.body.splitlines()[1]
+    assert len(snippet) <= 40
+    assert snippet.endswith("word...")

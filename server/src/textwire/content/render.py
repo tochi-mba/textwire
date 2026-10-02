@@ -37,25 +37,30 @@ def _clean(text: str) -> str:
     return _SPACE.sub(" ", text).strip()
 
 
-def _snippet(text: str) -> str:
+def _snippet(text: str, limit: int) -> str:
+    """At most ``limit`` characters of ``text``, cut at a word; nothing when ``limit`` is 0."""
+    if limit == 0:
+        return ""
     text = _clean(text)
-    if len(text) <= SNIPPET_CHARS:
+    if len(text) <= limit:
         return text
-    cut = text.rfind(" ", 0, SNIPPET_CHARS - 3)
-    return text[: cut if cut > 0 else SNIPPET_CHARS - 3].rstrip(" ,.;:") + "..."
+    cut = text.rfind(" ", 0, limit - 3)
+    return text[: cut if cut > 0 else limit - 3].rstrip(" ,.;:") + "..."
 
 
 def _domain(url: str) -> str:
     return (urlsplit(url).hostname or "").removeprefix("www.")
 
 
-def search_document(query: str, hits: Sequence[Hit]) -> Document:
+def search_document(
+    query: str, hits: Sequence[Hit], *, snippet_chars: int = SNIPPET_CHARS
+) -> Document:
     """A SEARCH document: a numbered list whose items link to the results."""
     blocks = []
     for number, hit in enumerate(hits, 1):
         title = _clean(hit.title) or _domain(hit.url)
         item = f"{number}. {title}[{number}] ({_domain(hit.url)})"
-        snippet = _snippet(hit.snippet)
+        snippet = _snippet(hit.snippet, snippet_chars)
         blocks.append(f"{item}\n{snippet}" if snippet else item)
     return Document(
         kind=Kind.SEARCH,

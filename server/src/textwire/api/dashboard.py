@@ -64,6 +64,11 @@ DASHBOARD_HTML = """<!doctype html>
   button:disabled { opacity: 0.5; cursor: default; }
   #result { margin-top: 10px; font-size: 14px; min-height: 1.5em; }
   .empty { color: var(--muted); margin: 12px 0 0; }
+  .config { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0 28px; margin-top: 12px; }
+  .config .row > span:first-child { font-family: var(--mono); font-size: 12px; color: var(--muted); word-break: break-all; }
+  .config .row > span:last-child { text-align: right; word-break: break-all; }
+  #config-filter { width: 100%; margin-top: 14px; }
+  code { font-family: var(--mono); font-size: 13px; background: var(--raised); padding: 1px 6px; border-radius: 5px; }
   footer { padding: 0 24px 28px; color: var(--muted); font-size: 13px; max-width: 1280px; margin: 0 auto; }
   @media (prefers-reduced-motion: reduce) { .bar > div { transition: none; } }
   @media (max-width: 520px) { header .sub { display: none; } main, footer { padding-inline: 16px; } }
@@ -110,12 +115,39 @@ DASHBOARD_HTML = """<!doctype html>
     <div class="scroll"><table><thead><tr><th scope="col">When</th><th scope="col">For</th><th scope="col">Reply</th><th scope="col">Kind</th><th scope="col">Title</th><th scope="col">Size</th></tr></thead><tbody id="documents"></tbody></table></div>
     <p id="documents-empty" class="empty">Nothing fetched yet.</p>
   </section>
+  <section class="card wide" aria-labelledby="config-heading">
+    <h2 id="config-heading">Configuration</h2>
+    <p class="muted" style="margin:0">Every setting this server started with, from the environment and <code>server/.env</code>. Secrets show only whether they are set; phone numbers are masked. To change one, edit <code>server/.env</code> and restart. Each is explained in <code>docs/OPERATIONS.md</code>.</p>
+    <label class="sr-only" for="config-filter">Filter the settings</label>
+    <input id="config-filter" type="search" autocomplete="off" placeholder="Filter: search, budget, true, 12…">
+    <div id="config" class="config"></div>
+    <p id="config-empty" class="empty" style="display:none">No setting matches.</p>
+  </section>
 </main>
 <footer>A REX Technologies product. <span id="version"></span> &middot; refreshes every 5 seconds &middot; <a href="/healthy">/healthy</a> &middot; <a href="/ready">/ready</a> &middot; <a href="/api/overview">/api/overview</a></footer>
 <script>
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const when = (iso) => iso ? new Date(iso).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit"}) : "";
+  // A setting's value as text: switches read on and off, and nothing reads as a dash.
+  const shown = (value) => {
+    if (value === true) return "on";
+    if (value === false) return "off";
+    if (Array.isArray(value)) return value.length ? value.join(", ") : "\\u2013";
+    return value === "" || value === null || value === undefined ? "\\u2013" : String(value);
+  };
+  let config = {};
+  let configText = "";
+  function drawConfig() {
+    const typed = $("config-filter").value.trim().toLowerCase();
+    // "page frames" finds TEXTWIRE_PAGE_FRAMES; anything typed also matches values.
+    const key = typed.replace(/\\s+/g, "_");
+    const rows = Object.entries(config).filter(([name, value]) =>
+      !typed || name.toLowerCase().includes(key) || shown(value).toLowerCase().includes(typed));
+    $("config").innerHTML = rows.map(([name, value]) =>
+      `<div class="row"><span>${esc(name)}</span><span>${esc(shown(value))}</span></div>`).join("");
+    $("config-empty").style.display = rows.length || !configText ? "none" : "";
+  }
   async function refresh() {
     let data;
     try {
@@ -145,6 +177,11 @@ DASHBOARD_HTML = """<!doctype html>
     $("actual").textContent = `${b.actual_cost.toFixed(2)} ${b.currency}`;
     $("outbound").textContent = `${data.outbound_today} SMS`;
     $("day").textContent = b.day;
+    // Settings change only when the server restarts; redraw then, not every five seconds.
+    const nextConfig = JSON.stringify(data.config);
+    if (nextConfig !== configText) {
+      configText = nextConfig; config = data.config; drawConfig();
+    }
     const requests = data.requests;
     $("requests-empty").style.display = requests.length ? "none" : "";
     $("requests").innerHTML = requests.map((r) => {
@@ -172,6 +209,7 @@ DASHBOARD_HTML = """<!doctype html>
       button.disabled = false; refresh();
     }
   });
+  $("config-filter").addEventListener("input", drawConfig);
   refresh();
   setInterval(refresh, 5000);
 </script>

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from textwire.content.extract import ExtractError, extract_document
 from textwire.content.fetch import FetchError
-from textwire.content.render import help_document, search_document
+from textwire.content.render import SNIPPET_CHARS, help_document, search_document
 from textwire.content.search import SearchError
 
 if TYPE_CHECKING:
@@ -29,10 +29,18 @@ class Unavailable(Exception):  # noqa: N818 - a result, not a bug; reads better 
 class Library:
     """Turns URLs and queries into documents, and every failure into a status line."""
 
-    def __init__(self, fetcher: Fetcher, search: SearchProvider, *, search_results: int) -> None:
+    def __init__(
+        self,
+        fetcher: Fetcher,
+        search: SearchProvider,
+        *,
+        search_results: int,
+        snippet_chars: int = SNIPPET_CHARS,
+    ) -> None:
         self._fetcher = fetcher
         self._search = search
         self._results = search_results
+        self._snippet_chars = snippet_chars
 
     async def page(self, url: str) -> Document:
         """The readable document at ``url``."""
@@ -50,7 +58,7 @@ class Library:
         except SearchError as error:
             log.info("search unavailable", extra={"reason": error.status_text})
             raise Unavailable(error.status_text) from error
-        return search_document(query, hits)
+        return search_document(query, hits, snippet_chars=self._snippet_chars)
 
     @staticmethod
     def help() -> Document:
