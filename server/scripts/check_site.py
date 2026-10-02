@@ -54,6 +54,7 @@ class PageParser(HTMLParser):
         self.assets: list[str] = []
         self.title = ""
         self.lang = ""
+        self.base = ""
         self.description = ""
         self.headings = 0
         self.images_without_alt: list[str] = []
@@ -63,12 +64,19 @@ class PageParser(HTMLParser):
         self._code = ""
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        """Record what the tag refers to."""
+        """Record what the tag says about the page and what it refers to."""
         values = {key: (value or "") for key, value in attrs}
         if "id" in values:
             self.ids.add(values["id"])
+        self._note_page(tag, values)
+        self._note_references(tag, values)
+
+    def _note_page(self, tag: str, values: dict[str, str]) -> None:
+        """The page's language, base, description, headings, title and commands."""
         if tag == "html":
             self.lang = values.get("lang", "")
+        if tag == "base":
+            self.base = values.get("href", "")
         if tag == "meta" and values.get("name") == "description":
             self.description = values.get("content", "")
         if tag == "h1":
@@ -78,6 +86,9 @@ class PageParser(HTMLParser):
         if tag == "code":
             self._in_code = True
             self._code = ""
+
+    def _note_references(self, tag: str, values: dict[str, str]) -> None:
+        """Links, assets and Copy buttons."""
         if tag == "a" and "href" in values:
             self.hrefs.append(values["href"])
         if tag == "img":
@@ -151,6 +162,11 @@ def _structure_problems(page: Path, parser: PageParser, html: str, product: str)
         problems.append(f"the page has {parser.headings} h1 headings; it needs exactly one.")
     if page.name == "index.html" and not parser.description:
         problems.append("the page has no meta description.")
+    if page.name == "404.html" and not parser.base.startswith(("/", "https://")):
+        problems.append(
+            "the not-found page has no <base> at the site root: Pages serves it at the missing "
+            "address, so its relative links and styles break below the top level."
+        )
     return problems
 
 
