@@ -24,6 +24,7 @@ const overview = (changes = {}) => ({
   budget: { used: 16, limit: 200, estimated_cost: 0.896, actual_cost: 0.9, currency: 'USD', day: '2026-10-01' },
   requests: [],
   documents: [],
+  config: { TEXTWIRE_PAGE_FRAMES: 12, TEXTWIRE_DASHBOARD: true },
   ...changes,
 });
 
@@ -202,4 +203,79 @@ test('a probe the server never answers says so and frees the button', async () =
   await page.document.getElementById('probe').dispatch('submit');
   assert.equal(page.text('result'), 'the server did not answer');
   assert.equal(page.button.disabled, false);
+});
+
+const CONFIG = {
+  TEXTWIRE_SEARCH_REGION: 'uk-en',
+  TEXTWIRE_SEARCH_SAFESEARCH: 'moderate',
+  TEXTWIRE_PAGE_FRAMES: 12,
+  TEXTWIRE_DASHBOARD: true,
+  TEXTWIRE_DEBUG: false,
+  TEXTWIRE_ALLOWED_NUMBERS: ['+44…0123', '+44…0456'],
+  TEXTWIRE_DEBUG_DROP_ONCE: [],
+  TEXTWIRE_GATEWAY_URL: '',
+  TEXTWIRE_TWILIO_AUTH_TOKEN: 'set',
+  TEXTWIRE_USER_AGENT: '<b>agent</b>',
+};
+
+// The settings drawn, as name and value pairs read back out of the rows' markup.
+const drawn = (page) =>
+  [...page.document.getElementById('config').innerHTML.matchAll(/<span>(.*?)<\/span><span>(.*?)<\/span>/g)].map(
+    (match) => [match[1], match[2]],
+  );
+
+test('every setting is listed, switches read on and off, and nothing reads as a dash', async () => {
+  const page = await start({ '/api/overview': json(overview({ config: CONFIG })) });
+  assert.deepEqual(drawn(page), [
+    ['TEXTWIRE_SEARCH_REGION', 'uk-en'],
+    ['TEXTWIRE_SEARCH_SAFESEARCH', 'moderate'],
+    ['TEXTWIRE_PAGE_FRAMES', '12'],
+    ['TEXTWIRE_DASHBOARD', 'on'],
+    ['TEXTWIRE_DEBUG', 'off'],
+    ['TEXTWIRE_ALLOWED_NUMBERS', '+44…0123, +44…0456'],
+    ['TEXTWIRE_DEBUG_DROP_ONCE', '–'],
+    ['TEXTWIRE_GATEWAY_URL', '–'],
+    ['TEXTWIRE_TWILIO_AUTH_TOKEN', 'set'],
+    ['TEXTWIRE_USER_AGENT', '&lt;b&gt;agent&lt;/b&gt;'],
+  ]);
+  assert.equal(page.document.getElementById('config-empty').style.display, 'none');
+});
+
+test('the filter finds settings by name, with spaces for underscores, and by value', async () => {
+  const page = await start({ '/api/overview': json(overview({ config: CONFIG })) });
+  const filter = page.document.getElementById('config-filter');
+  const names = async (typed) => {
+    filter.value = typed;
+    await filter.dispatch('input');
+    return drawn(page).map(([name]) => name);
+  };
+  assert.deepEqual(await names('search'), ['TEXTWIRE_SEARCH_REGION', 'TEXTWIRE_SEARCH_SAFESEARCH']);
+  assert.deepEqual(await names('  Page Frames '), ['TEXTWIRE_PAGE_FRAMES']);
+  assert.deepEqual(await names('off'), ['TEXTWIRE_DEBUG']);
+  assert.deepEqual(await names('0456'), ['TEXTWIRE_ALLOWED_NUMBERS']);
+  assert.deepEqual(await names('nothing like this'), []);
+  assert.equal(page.document.getElementById('config-empty').style.display, '');
+  assert.equal((await names('')).length, Object.keys(CONFIG).length);
+  assert.equal(page.document.getElementById('config-empty').style.display, 'none');
+});
+
+test('settings are redrawn only when the server reports different ones', async () => {
+  let config = CONFIG;
+  const page = await start({ '/api/overview': () => json(overview({ config }))  });
+  const list = page.document.getElementById('config');
+  list.innerHTML = 'kept';
+  await page.timers[0].callback();
+  assert.equal(list.innerHTML, 'kept');
+  config = { ...CONFIG, TEXTWIRE_PAGE_FRAMES: 20 };
+  await page.timers[0].callback();
+  assert.ok(drawn(page).some(([name, value]) => name === 'TEXTWIRE_PAGE_FRAMES' && value === '20'));
+});
+
+test('before the first answer the empty message stays hidden', async () => {
+  const page = await start({ '/api/overview': new Error('offline') });
+  const filter = page.document.getElementById('config-filter');
+  filter.value = 'x';
+  await filter.dispatch('input');
+  assert.equal(page.document.getElementById('config-empty').style.display, 'none');
+  assert.equal(page.document.getElementById('config').innerHTML, '');
 });

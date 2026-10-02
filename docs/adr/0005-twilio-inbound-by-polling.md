@@ -13,8 +13,10 @@ home PC means a tunnel or a reverse proxy, and an endpoint that has to be defend
 
 In the default configuration the server polls the Messages list every three seconds for
 messages sent to its number, deduplicates by message SID in its database, and never exposes
-anything to the internet. A signed webhook receiver exists as an option
-(`TEXTWIRE_INBOUND=webhook`) for deployments that already have a public URL.
+anything to the internet. A signed webhook receiver is planned as an option for
+deployments that already have a public URL: the signature check it needs is written and
+tested (`transport.twilio`), and `textwire serve` refuses `TEXTWIRE_INBOUND=webhook` until
+the receiver itself exists.
 
 ## Why
 

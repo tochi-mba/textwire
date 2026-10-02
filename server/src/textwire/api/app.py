@@ -10,15 +10,18 @@ from __future__ import annotations
 import asyncio
 import contextlib
 from datetime import timedelta
+from enum import StrEnum
 from http import HTTPStatus
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 
 from textwire import __version__
 from textwire.api.dashboard import DASHBOARD_HTML
+from textwire.config import ENV_PREFIX
 from textwire.logs import mask_number
 from textwire.service.budget import BudgetExceededError
 from textwire.service.probe import probe_frame
@@ -31,6 +34,36 @@ if TYPE_CHECKING:
 
 #: How many recent requests, documents and log lines the dashboard shows.
 RECENT = 30
+
+#: Settings that identify a person or an account: shown masked, never in full.
+_MASKED = frozenset({"twilio_number", "twilio_account_sid"})
+
+
+def public_settings(settings: Settings) -> dict[str, Any]:
+    """Every setting as the dashboard shows it: secrets say only whether they are set.
+
+    Keys are the environment variable names. Phone numbers and the account id are masked to
+    their last four digits, the same as in the logs.
+    """
+    view: dict[str, Any] = {}
+    for name in type(settings).model_fields:
+        value = getattr(settings, name)
+        if isinstance(value, SecretStr):
+            shown: Any = "set" if value.get_secret_value() else "not set"
+        elif name == "allowed_numbers":
+            shown = [mask_number(number) for number in value]
+        elif name in _MASKED:
+            shown = mask_number(value) if value else ""
+        elif isinstance(value, StrEnum):
+            shown = value.value
+        elif isinstance(value, Path):
+            shown = value.as_posix()
+        elif isinstance(value, tuple):
+            shown = list(value)
+        else:
+            shown = value
+        view[ENV_PREFIX + name.upper()] = shown
+    return view
 
 
 class ProbeRequest(BaseModel):
@@ -53,6 +86,7 @@ def _overview(components: Components) -> dict[str, Any]:
         "alphabet": settings.frame_alphabet.value,
         "allowed": len(settings.allowed_numbers),
         "page_frames": settings.page_frames,
+        "config": public_settings(settings),
         "now": now.isoformat(timespec="seconds"),
         "budget": {
             "day": summary.day.isoformat(),
@@ -111,6 +145,13 @@ def create_app(components: Components | None = None, *, run_dispatcher: bool = T
         title="textwire", version=__version__, lifespan=lifespan, docs_url=None, redoc_url=None
     )
     app.state.components = components
+    _add_health_routes(app, components)
+    _add_dashboard_routes(app, components)
+    return app
+
+
+def _add_health_routes(app: FastAPI, components: Components | None) -> None:
+    """``/healthy`` and ``/ready``: always on, whatever the dashboard setting."""
 
     @app.get("/healthy")
     async def healthy() -> dict[str, Any]:
@@ -135,36 +176,48 @@ def create_app(components: Components | None = None, *, run_dispatcher: bool = T
             HTTPStatus.OK if ready else HTTPStatus.SERVICE_UNAVAILABLE,
         )
 
+
+_DASHBOARD_OFF = "the dashboard is off (TEXTWIRE_DASHBOARD=false)"
+
+
+def _add_dashboard_routes(app: FastAPI, components: Components | None) -> None:
+    """The page at ``/`` and the two endpoints it calls; 404 when the dashboard is off."""
+
+    def wired() -> Components:
+        """The components, or the reason the dashboard cannot answer."""
+        if components is None:
+            raise HTTPException(503, "the server is not wired to a transport")
+        if not components.settings.dashboard:
+            raise HTTPException(404, _DASHBOARD_OFF)
+        return components
+
     @app.get("/", response_class=HTMLResponse)
     async def dashboard() -> str:
         """The operator's page; it draws ``/api/overview`` every few seconds."""
+        if components is not None and not components.settings.dashboard:
+            raise HTTPException(404, _DASHBOARD_OFF)
         return DASHBOARD_HTML
 
     @app.get("/api/overview")
     async def overview() -> dict[str, Any]:
         """Everything the dashboard shows."""
-        if components is None:
-            raise HTTPException(503, "the server is not wired to a transport")
-        return _overview(components)
+        return _overview(wired())
 
     @app.post("/api/probe")
     async def send_probe(body: ProbeRequest) -> dict[str, Any]:
         """Send one probe frame to an allowed number (docs/OPERATIONS.md section 5)."""
-        if components is None:
-            raise HTTPException(503, "the server is not wired to a transport")
-        if body.number not in components.settings.allowed_numbers:
+        parts = wired()
+        if body.number not in parts.settings.allowed_numbers:
             raise HTTPException(403, "only numbers in TEXTWIRE_ALLOWED_NUMBERS can be probed")
         try:
-            components.budget.check(1)
+            parts.budget.check(1)
         except BudgetExceededError as exceeded:
             raise HTTPException(429, exceeded.status_text) from exceeded
-        text = probe_frame(components.settings)
-        sent = await components.transport.send(body.number, text)
-        components.store.record_outbound(sent, tag=None, seq=None, at=components.clock.now())
-        components.budget.charge(1)
+        text = probe_frame(parts.settings)
+        sent = await parts.transport.send(body.number, text)
+        parts.store.record_outbound(sent, tag=None, seq=None, at=parts.clock.now())
+        parts.budget.charge(1)
         return {"id": sent.id, "characters": len(text), "to": mask_number(body.number)}
-
-    return app
 
 
 def retention(settings: Settings) -> timedelta:

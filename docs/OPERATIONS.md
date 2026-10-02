@@ -37,9 +37,9 @@ every one is listed with its default in [../server/.env.example](../server/.env.
 2. Note the account SID, the auth token (Account, API keys and tokens) and the number in
    E.164 form (`+447700900000`).
 3. Do **not** configure a messaging webhook on the number. Twilio stores inbound messages
-   without one and the server polls for them (ADR-0005). If you later switch to
-   `TEXTWIRE_INBOUND=webhook`, point the number's "A message comes in" URL at
-   `TEXTWIRE_PUBLIC_BASE_URL/webhooks/twilio`.
+   without one and the server polls for them (ADR-0005). The webhook receiver is not built
+   yet, and `textwire serve` refuses `TEXTWIRE_INBOUND=webhook` rather than polling while
+   you think it is not.
 4. From the console, send a text to the phone and reply to it from the phone, then confirm
    in the console's message log that the reply appears with the full body. Twilio reassembles
    long inbound texts into one message; the `NumSegments` field says how many SMS it took.
@@ -128,7 +128,14 @@ and shows:
 - the recent requests with who sent them (masked), how many replies each got, and whether it
   has been answered;
 - the documents still held for paging and links, with the reply tag to quote;
-- a form that sends the route probe to a phone on the allowlist (section 5).
+- a form that sends the route probe to a phone on the allowlist (section 5);
+- every setting the server started with, filterable by name or value (type `search` or
+  `page frames`). Secrets show only whether they are set and phone numbers are masked. The
+  list is read-only: settings come from the environment and `server/.env`, and change on a
+  restart.
+
+`TEXTWIRE_DASHBOARD=false` turns the page and its two endpoints off (they answer `404`) and
+leaves `/healthy` and `/ready`, for a host other machines can reach.
 
 It also answers `/healthy` (alive, no I/O), `/ready` (the store answers and the transport is
 configured; `503` otherwise) and `/api/overview` (the JSON the page draws). The dashboard
@@ -188,11 +195,11 @@ configuration does not change shape when it does.
 | `TEXTWIRE_ENVIRONMENT` | `local` | A label in logs and health output. |
 | `TEXTWIRE_LOG_LEVEL` | `INFO` | `DEBUG` shows every poll. |
 | `TEXTWIRE_LOG_FORMAT` | `console` | `json` for a log collector. |
-| `TEXTWIRE_HOST`, `TEXTWIRE_PORT` | `127.0.0.1`, `8140` | The health endpoint and, in webhook mode, the inbound URL. |
+| `TEXTWIRE_HOST`, `TEXTWIRE_PORT` | `127.0.0.1`, `8140` | Where the dashboard and the health endpoints listen. |
 | `TEXTWIRE_DATA_DIR` | `data` | Where the SQLite database lives. |
 | `TEXTWIRE_ALLOWED_NUMBERS` | empty | Comma-separated E.164 numbers the server answers. Empty means nobody. |
-| `TEXTWIRE_TRANSPORT` | `twilio` | `twilio` or `gateway`. |
-| `TEXTWIRE_INBOUND` | `poll` | `poll` needs nothing public; `webhook` needs `TEXTWIRE_PUBLIC_BASE_URL`. |
+| `TEXTWIRE_TRANSPORT` | `twilio` | `twilio`. `gateway` is refused by `textwire serve` until section 8's transport is built. |
+| `TEXTWIRE_INBOUND` | `poll` | `poll` needs nothing public. `webhook` is refused by `textwire serve` until the receiver is built. |
 | `TEXTWIRE_POLL_SECONDS` | `3.0` | How often Twilio is asked for new messages. |
 | `TEXTWIRE_LOOKBACK_MINUTES` | `60` | How far back the first poll after a start looks. |
 | `TEXTWIRE_SEND_RETRIES` | `3` | Retries when Twilio says a send failed temporarily (backoff 1, 2, 4 s). |
@@ -200,7 +207,7 @@ configuration does not change shape when it does.
 | `TEXTWIRE_STATUS_INTERVAL_SECONDS` | `60.0` | How often delivery statuses and prices are fetched and old data purged. |
 | `TEXTWIRE_TWILIO_ACCOUNT_SID`, `TEXTWIRE_TWILIO_AUTH_TOKEN`, `TEXTWIRE_TWILIO_NUMBER` | empty | The account and number. Required for Twilio. |
 | `TEXTWIRE_TWILIO_API_BASE` | `https://api.twilio.com` | Only changed to point tests at a fake. |
-| `TEXTWIRE_PUBLIC_BASE_URL` | empty | The public https URL, for webhook mode only. |
+| `TEXTWIRE_PUBLIC_BASE_URL` | empty | The public https URL, for webhook mode once it exists. |
 | `TEXTWIRE_GATEWAY_URL`, `TEXTWIRE_GATEWAY_USERNAME`, `TEXTWIRE_GATEWAY_PASSWORD` | empty | The Android gateway. Required for that transport. |
 | `TEXTWIRE_DAILY_SEGMENT_BUDGET` | `200` | Outbound SMS per UTC day, hard cap. |
 | `TEXTWIRE_PRICE_PER_SEGMENT`, `TEXTWIRE_CURRENCY` | `0.056`, `USD` | For the estimate `?` shows. |
@@ -211,8 +218,12 @@ configuration does not change shape when it does.
 | `TEXTWIRE_SEARCH_RESULTS` | `5` | Results per search, 1 to 10. |
 | `TEXTWIRE_SEARCH_REGION`, `TEXTWIRE_SEARCH_BACKEND` | `uk-en`, `auto` | Passed to the search package. |
 | `TEXTWIRE_SEARCH_TIMEOUT_SECONDS`, `TEXTWIRE_FETCH_TIMEOUT_SECONDS` | `20.0` | Before a search or fetch is given up. |
+| `TEXTWIRE_SEARCH_SAFESEARCH` | `moderate` | `off`, `moderate` or `strict` filtering of explicit results. |
+| `TEXTWIRE_SEARCH_SNIPPET_CHARS` | `160` | Characters of each result's summary, 20 to 300. `0` leaves summaries out: a search then takes about half the SMS. |
 | `TEXTWIRE_FETCH_MAX_BYTES` | `3000000` | A page bigger than this is refused while it is still downloading. |
+| `TEXTWIRE_FETCH_MAX_REDIRECTS` | `5` | Redirects followed, 0 to 10; every hop is checked against private addresses. |
 | `TEXTWIRE_USER_AGENT` | a browser-like string with `textwire` in it | What sites see. |
+| `TEXTWIRE_DASHBOARD` | `true` | `false` turns off the dashboard and its API (section 6a); health stays. |
 | `TEXTWIRE_RETENTION_HOURS` | `24` | How long documents and sent frames are kept for paging and resends. |
 | `TEXTWIRE_NOTICE_INTERVAL_MINUTES` | `10` | At most one bad-request or budget notice per sender per interval. |
 | `TEXTWIRE_DEBUG_DROP_ONCE` | empty | Frame numbers to skip, once, in the first multi-frame reply after a start. For the acceptance run only. |

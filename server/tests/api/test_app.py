@@ -10,8 +10,9 @@ from httpx import ASGITransport, AsyncClient
 
 from tests.conftest import PHONE, REPO_ROOT, STRANGER, build_settings
 from textwire import __version__
-from textwire.api.app import RECENT, create_app, retention
+from textwire.api.app import RECENT, create_app, public_settings, retention
 from textwire.clock import FakeClock
+from textwire.config import Settings
 from textwire.content.fakes import load_fixtures
 from textwire.service.store import Store
 from textwire.service.wiring import Components, build_components
@@ -200,3 +201,47 @@ async def test_the_dispatcher_runs_inside_the_lifespan(clock: FakeClock, tmp_pat
 
 def test_retention_follows_the_settings() -> None:
     assert retention(build_settings(retention_hours=6)) == timedelta(hours=6)
+
+
+async def test_the_overview_shows_every_setting_with_secrets_hidden(
+    wired: tuple[AsyncClient, Components],
+) -> None:
+    http, components = wired
+    config = (await http.get("/api/overview")).json()["config"]
+    assert set(config) == {f"TEXTWIRE_{name.upper()}" for name in Settings.model_fields}
+    assert config["TEXTWIRE_TWILIO_AUTH_TOKEN"] == "set"
+    assert config["TEXTWIRE_GATEWAY_PASSWORD"] == "not set"
+    assert config["TEXTWIRE_TWILIO_NUMBER"] == "+44...0000"
+    assert config["TEXTWIRE_TWILIO_ACCOUNT_SID"].endswith("...0000")
+    assert config["TEXTWIRE_ALLOWED_NUMBERS"] == ["+44...0123"]
+    assert config["TEXTWIRE_GATEWAY_URL"] == ""
+    assert config["TEXTWIRE_TRANSPORT"] == "twilio"
+    assert config["TEXTWIRE_DATA_DIR"] == components.settings.data_dir.as_posix()
+    assert config["TEXTWIRE_DEBUG_DROP_ONCE"] == []
+    assert config["TEXTWIRE_PAGE_FRAMES"] == 12
+    assert config["TEXTWIRE_DASHBOARD"] is True
+    text = (await http.get("/api/overview")).text
+    assert "test-auth-token" not in text
+    assert PHONE not in text
+
+
+def test_an_empty_masked_setting_stays_empty() -> None:
+    view = public_settings(build_settings(twilio_number="", twilio_account_sid=""))
+    assert view["TEXTWIRE_TWILIO_NUMBER"] == ""
+    assert view["TEXTWIRE_TWILIO_ACCOUNT_SID"] == ""
+
+
+async def test_with_the_dashboard_off_only_health_answers(clock: FakeClock) -> None:
+    components = _components(clock, dashboard=False)
+    app = create_app(components, run_dispatcher=False)
+    async with (
+        LifespanManager(app),
+        AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as http,
+    ):
+        for method, path in (("GET", "/"), ("GET", "/api/overview"), ("POST", "/api/probe")):
+            response = await http.request(method, path, json={"number": PHONE})
+            assert response.status_code == 404, path
+            assert "TEXTWIRE_DASHBOARD=false" in response.text
+        assert (await http.get("/healthy")).status_code == 200
+        assert (await http.get("/ready")).status_code == 200
+    await components.aclose()

@@ -23,7 +23,7 @@ from textwire.cli.serve import (
     serve,
 )
 from textwire.clock import FakeClock
-from textwire.config import Settings, TransportKind
+from textwire.config import InboundMode, Settings, TransportKind
 from textwire.protocol.alphabets import Alphabet
 from textwire.protocol.frames import body_bytes, decode_frame
 from textwire.service.probe import PROBE_TAG, probe_frame
@@ -51,6 +51,20 @@ def test_the_gateway_transport_is_not_built_yet(clock: FakeClock) -> None:
         gateway_username="u",
         gateway_password="p",
     )
+    with pytest.raises(ConfigurationError, match="not built yet"):
+        build_transport(settings, memory_store(), clock)
+
+
+@pytest.mark.parametrize("public_url", ["", "https://textwire.example"])
+def test_the_webhook_receiver_is_not_built_yet(clock: FakeClock, public_url: str) -> None:
+    # Refused whether or not its URL is set, so nobody configures a webhook that never runs.
+    settings = build_settings(inbound=InboundMode.WEBHOOK, public_base_url=public_url)
+    with pytest.raises(ConfigurationError, match="webhook receiver is not built yet"):
+        build_transport(settings, memory_store(), clock)
+
+
+def test_the_gateway_is_refused_before_its_settings_are_asked_for(clock: FakeClock) -> None:
+    settings = build_settings(transport=TransportKind.GATEWAY)
     with pytest.raises(ConfigurationError, match="not built yet"):
         build_transport(settings, memory_store(), clock)
 

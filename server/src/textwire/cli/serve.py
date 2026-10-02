@@ -17,7 +17,7 @@ import uvicorn
 
 from textwire.api.app import create_app
 from textwire.clock import SystemClock
-from textwire.config import TransportKind, load_settings
+from textwire.config import InboundMode, TransportKind, load_settings
 from textwire.logs import configure_logging, mask_number
 from textwire.service.probe import probe_frame
 from textwire.service.store import Store
@@ -44,12 +44,17 @@ class ConfigurationError(Exception):
 
 def build_transport(settings: Settings, store: Store, clock: Clock) -> Transport:
     """The configured SMS provider, or :class:`ConfigurationError` saying what is missing."""
-    problems = settings.transport_problems()
-    if problems:
-        raise ConfigurationError("; ".join(problems))
+    # Refuse what is not built before asking for its settings: a webhook that is configured
+    # but never served would leave the server polling while the operator thinks it is not.
     if settings.transport is not TransportKind.TWILIO:
         msg = "the Android gateway transport is not built yet; set TEXTWIRE_TRANSPORT=twilio"
         raise ConfigurationError(msg)
+    if settings.inbound is not InboundMode.POLL:
+        msg = "the Twilio webhook receiver is not built yet; set TEXTWIRE_INBOUND=poll"
+        raise ConfigurationError(msg)
+    problems = settings.transport_problems()
+    if problems:
+        raise ConfigurationError("; ".join(problems))
     client = TwilioClient(
         account_sid=settings.twilio_account_sid,
         auth_token=settings.twilio_auth_token.get_secret_value(),
