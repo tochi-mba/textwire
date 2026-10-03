@@ -45,6 +45,21 @@ def test_crc8_matches_the_published_check_value() -> None:
     assert crc8(b"") == 0
 
 
+def _bitwise_crc8(data: bytes) -> int:
+    """The textbook form, one bit at a time: what the lookup table must agree with."""
+    crc = 0
+    for byte in data:
+        crc ^= byte
+        for _ in range(8):
+            crc = ((crc << 1) ^ 0x07) & 0xFF if crc & 0x80 else (crc << 1) & 0xFF
+    return crc
+
+
+@given(st.binary(max_size=200))
+def test_crc8_by_table_agrees_with_the_bitwise_definition(data: bytes) -> None:
+    assert crc8(data) == _bitwise_crc8(data)
+
+
 @pytest.mark.parametrize("alphabet", list(Alphabet))
 def test_a_full_frame_is_exactly_one_sms(alphabet: Alphabet) -> None:
     body = bytes(range(body_bytes(alphabet)))

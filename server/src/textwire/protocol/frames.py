@@ -99,13 +99,25 @@ class Frame:
             raise ValueError(msg)
 
 
+def _crc_table() -> tuple[int, ...]:
+    """The CRC of every single byte, so the checksum takes one lookup a byte, not eight steps."""
+    table = []
+    for byte in range(256):
+        crc = byte
+        for _ in range(8):
+            crc = ((crc << 1) ^ _CRC_POLY) & 0xFF if crc & 0x80 else (crc << 1) & 0xFF
+        table.append(crc)
+    return tuple(table)
+
+
+_CRC_TABLE = _crc_table()
+
+
 def crc8(data: bytes) -> int:
     """CRC-8/SMBUS: polynomial 0x07, initial 0x00, no reflection, no final XOR."""
     crc = 0
     for byte in data:
-        crc ^= byte
-        for _ in range(8):
-            crc = ((crc << 1) ^ _CRC_POLY) & 0xFF if crc & 0x80 else (crc << 1) & 0xFF
+        crc = _CRC_TABLE[crc ^ byte]
     return crc
 
 
