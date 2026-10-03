@@ -20,13 +20,15 @@ private val BASE64_PATTERN = Regex("[A-Za-z0-9_-]*")
 /** CRC-8/SMBUS over the five identifying header bytes and payload body. */
 fun crc8(bytes: List<Byte>): Int {
     var crc = 0
-    for (byte in bytes) {
-        crc = crc xor (byte.toInt() and 255)
-        repeat(8) {
-            crc = if (crc and 128 != 0) ((crc shl 1) xor 7) and 255 else (crc shl 1) and 255
-        }
-    }
+    for (byte in bytes) crc = CRC_TABLE[crc xor (byte.toInt() and 255)]
     return crc
+}
+
+/** The CRC of every single byte, so the checksum takes one lookup a byte instead of eight steps. */
+private val CRC_TABLE = IntArray(256) { byte ->
+    var crc = byte
+    repeat(8) { crc = if (crc and 128 != 0) ((crc shl 1) xor 7) and 255 else (crc shl 1) and 255 }
+    crc
 }
 
 private fun encodeBytes(bytes: ByteArray, alphabet: Alphabet): String {
