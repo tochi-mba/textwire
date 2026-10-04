@@ -44,17 +44,48 @@ class DatabaseTest {
     }
 
     @Test
-    fun `pages are listed newest first and counted`() {
+    fun `pages are listed newest first and forgotten one at a time`() {
         db.savePage(StoredPage(1, Kind.SEARCH, 1, 1, "# a", 3, 1_000))
         db.savePage(StoredPage(2, Kind.PAGE, 2, 5, "# b", 12, 2_000))
         db.savePage(StoredPage(2, Kind.PAGE, 2, 5, "# b2", 11, 2_500))
         assertEquals(listOf(2, 1), db.pages().map { it.tag })
         assertEquals("# b2", db.page(2)?.text)
         assertEquals(Kind.SEARCH, db.page(1)?.kind)
-        assertEquals(14, db.smsReceived())
         db.forget(2)
         assertNull(db.page(2))
-        assertEquals(3, db.smsReceived())
+        assertEquals(listOf(1), db.pages().map { it.tag })
+    }
+
+    @Test
+    fun `clearing history deletes pages and what made them but keeps replies on their way`() {
+        db.saveRequest(SentRequest(1, "01 s12 a", 100))
+        db.savePage(StoredPage(1, Kind.SEARCH, 1, 1, "# a", 3, 1_000))
+        db.saveRequest(SentRequest(2, "02 g12 b", 200))
+        db.saveFrame(Frame(2, 0, 2, listOf(1)), 300)
+        db.clearPages()
+        assertEquals(emptyList(), db.pages())
+        assertNull(db.request(1))
+        assertEquals(listOf(2), db.openRequests().map { it.tag })
+        assertEquals(1, db.frames(2).size)
+    }
+
+    @Test
+    fun `pages older than a moment are deleted with their requests`() {
+        db.saveRequest(SentRequest(1, "01 s12 a", 100))
+        db.savePage(StoredPage(1, Kind.SEARCH, 1, 1, "# a", 3, 1_000))
+        db.saveRequest(SentRequest(2, "02 s12 b", 100))
+        db.savePage(StoredPage(2, Kind.SEARCH, 1, 1, "# b", 3, 5_000))
+        assertEquals(1, db.deletePagesBefore(5_000))
+        assertEquals(listOf(2), db.pages().map { it.tag })
+        assertNull(db.request(1))
+        assertEquals(0, db.deletePagesBefore(5_000))
+    }
+
+    @Test
+    fun `the log can be cleared`() {
+        db.log(LogEntry(1, LogEntry.Direction.IN, "t", "n"))
+        db.clearLog()
+        assertEquals(emptyList(), db.recentLog(10))
     }
 
     @Test

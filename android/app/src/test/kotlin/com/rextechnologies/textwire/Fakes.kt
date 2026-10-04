@@ -6,6 +6,7 @@ import com.rextechnologies.textwire.data.SettingsSnapshot
 import com.rextechnologies.textwire.data.SettingsStore
 import com.rextechnologies.textwire.data.Storage
 import com.rextechnologies.textwire.data.StoredPage
+import com.rextechnologies.textwire.notify.Notifier
 import com.rextechnologies.textwire.protocol.Frame
 import com.rextechnologies.textwire.sms.SmsGateway
 import com.rextechnologies.textwire.work.NakScheduler
@@ -56,7 +57,30 @@ class FakeStorage : Storage {
 
     override fun recentLog(limit: Int): List<LogEntry> = entries.asReversed().take(limit)
 
-    override fun smsReceived(): Int = pagesByTag.values.sumOf { it.smsCount }
+    override fun clearPages() {
+        for (tag in pagesByTag.keys) requests.remove(tag)
+        pagesByTag.clear()
+    }
+
+    override fun deletePagesBefore(millis: Long): Int {
+        val old = pagesByTag.values.filter { it.receivedAtMillis < millis }.map { it.tag }
+        for (tag in old) {
+            pagesByTag.remove(tag)
+            requests.remove(tag)
+        }
+        return old.size
+    }
+
+    override fun clearLog() = entries.clear()
+}
+
+/** Remembers the pages it was told about instead of posting notifications. */
+class FakeNotifier : Notifier {
+    val pages = mutableListOf<StoredPage>()
+
+    override fun pageArrived(page: StoredPage) {
+        pages.add(page)
+    }
 }
 
 class FakeSettings(var snapshot: SettingsSnapshot = SettingsSnapshot(serverNumber = SERVER)) : SettingsStore {

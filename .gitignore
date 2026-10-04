@@ -34,7 +34,7 @@ protocol/dict/cache/
 .gradle/
 android/**/build/
 android/local.properties
-android/.kotlin/
+android/**/.kotlin/
 # Class files an editor's Java or Kotlin extension compiles beside the sources
 android/**/bin/
 *.apk

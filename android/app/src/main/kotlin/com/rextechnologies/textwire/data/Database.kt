@@ -128,6 +128,17 @@ class Database(context: Context, name: String? = "textwire.db") :
         for (table in listOf("requests", "frames", "pages")) writableDatabase.delete(table, "tag = ?", arrayOf("$tag"))
     }
 
+    override fun clearPages() {
+        writableDatabase.execSQL("DELETE FROM requests WHERE tag IN (SELECT tag FROM pages)")
+        writableDatabase.delete("pages", null, null)
+    }
+
+    override fun deletePagesBefore(millis: Long): Int {
+        val old = "SELECT tag FROM pages WHERE received_at < ?"
+        writableDatabase.execSQL("DELETE FROM requests WHERE tag IN ($old)", arrayOf<Any>(millis))
+        return writableDatabase.delete("pages", "received_at < ?", arrayOf("$millis"))
+    }
+
     override fun log(entry: LogEntry) {
         val values = ContentValues().apply {
             put("at", entry.atMillis)
@@ -159,11 +170,9 @@ class Database(context: Context, name: String? = "textwire.db") :
             }.toList()
         }
 
-    override fun smsReceived(): Int =
-        readableDatabase.rawQuery("SELECT coalesce(sum(sms_count), 0) FROM pages", null).use { cursor ->
-            cursor.moveToFirst()
-            cursor.getInt(0)
-        }
+    override fun clearLog() {
+        writableDatabase.delete("log", null, null)
+    }
 
     companion object {
         const val VERSION = 1

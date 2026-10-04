@@ -15,12 +15,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -31,29 +33,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rextechnologies.textwire.Controller
 import com.rextechnologies.textwire.Pending
 import com.rextechnologies.textwire.UiState
 import com.rextechnologies.textwire.data.StoredPage
-import com.rextechnologies.textwire.protocol.Kind
 import com.rextechnologies.textwire.protocol.encodeTag
-
-/** Looks like a web address rather than search words: has a dot and no spaces. */
-internal fun looksLikeUrl(text: String): Boolean {
-    val trimmed = text.trim()
-    return ' ' !in trimmed && ('.' in trimmed || "://" in trimmed)
-}
 
 @Composable
 fun HomeScreen(state: UiState, controller: Controller) {
     var input by rememberSaveable { mutableStateOf("") }
-    val submit = {
+    // Each button does what it says; Go on the keyboard guesses from what was typed.
+    val send = { action: (String) -> Unit ->
         if (input.isNotBlank()) {
-            if (looksLikeUrl(input)) controller.get(input) else controller.search(input)
+            action(input)
             input = ""
         }
     }
@@ -70,37 +68,27 @@ fun HomeScreen(state: UiState, controller: Controller) {
                 leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
-                keyboardActions = KeyboardActions(onGo = { submit() }),
+                keyboardActions = KeyboardActions(
+                    onGo = { send { if (looksLikeUrl(it)) controller.get(it) else controller.search(it) } },
+                ),
                 modifier = Modifier.fillMaxWidth().testTag("input"),
             )
-            Row(modifier = Modifier.padding(top = 8.dp)) {
-                Button(
-                    onClick = {
-                        if (input.isNotBlank()) {
-                            controller.search(input)
-                            input = ""
-                        }
-                    },
-                    modifier = Modifier.testTag("search"),
-                ) { Text("Search") }
+            Row(modifier = Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Button(onClick = { send(controller::search) }, modifier = Modifier.testTag("search")) {
+                    Text("Search")
+                }
                 Spacer(Modifier.width(8.dp))
-                FilledTonalButton(
-                    onClick = {
-                        if (input.isNotBlank()) {
-                            controller.get(input)
-                            input = ""
-                        }
-                    },
-                    modifier = Modifier.testTag("open"),
-                ) { Text("Open address") }
-                Spacer(Modifier.width(8.dp))
-                TextButton(onClick = controller::help) { Text("Help") }
+                FilledTonalButton(onClick = { send(controller::get) }, modifier = Modifier.testTag("open")) {
+                    Text("Open address")
+                }
+                Spacer(Modifier.weight(1f))
+                TextButton(onClick = controller::help, modifier = Modifier.testTag("help")) { Text("Help") }
             }
             Text(
-                "Today: ${state.meter.describe()} received",
+                todayLine(state.meter, state.settings.dailyLimit),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = 4.dp).testTag("today"),
             )
         }
         items(state.pending, key = { "pending-${it.tag}" }) { pending -> PendingCard(pending, controller) }
@@ -109,7 +97,9 @@ fun HomeScreen(state: UiState, controller: Controller) {
         } else if (state.pages.isNotEmpty()) {
             item { Text("Pages", style = MaterialTheme.typography.titleMedium) }
         }
-        items(state.pages, key = { it.tag }) { page -> PageCard(page) { controller.open(page.tag) } }
+        items(state.pages, key = { it.tag }) { page ->
+            PageCard(page, open = { controller.open(page.tag) }, delete = { controller.deletePage(page.tag) })
+        }
     }
 }
 
@@ -129,9 +119,20 @@ private fun EmptyHome() {
 
 @Composable
 private fun PendingCard(pending: Pending, controller: Controller) {
-    Card(modifier = Modifier.fillMaxWidth().testTag("pending-${encodeTag(pending.tag)}")) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(pending.request, style = MaterialTheme.typography.bodyMedium)
+    Card(
+        modifier = Modifier.fillMaxWidth().testTag("pending-${encodeTag(pending.tag)}"),
+        colors = cardColors(),
+    ) {
+        // Less padding below when a row of buttons ends the card: they carry their own.
+        Column(
+            modifier = Modifier.padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 16.dp,
+                bottom = if (pending.gaveUp) 4.dp else 16.dp,
+            ),
+        ) {
+            Text(requestLabel(pending.request), style = MaterialTheme.typography.bodyMedium)
             val total = pending.total
             if (total == null) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
@@ -141,9 +142,13 @@ private fun PendingCard(pending: Pending, controller: Controller) {
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(progressLabel(pending), style = MaterialTheme.typography.bodySmall)
-                if (pending.gaveUp) {
+            Text(progressLabel(pending), style = MaterialTheme.typography.bodySmall)
+            if (pending.gaveUp) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    TextButton(
+                        onClick = { controller.dismiss(pending.tag) },
+                        modifier = Modifier.testTag("dismiss-${encodeTag(pending.tag)}"),
+                    ) { Text("Dismiss") }
                     TextButton(
                         onClick = { controller.retry(pending.tag) },
                         modifier = Modifier.testTag("retry-${encodeTag(pending.tag)}"),
@@ -154,36 +159,41 @@ private fun PendingCard(pending: Pending, controller: Controller) {
     }
 }
 
-internal fun progressLabel(pending: Pending): String {
-    val progress = pending.total?.let { "${pending.received} of $it texts" } ?: "waiting for the first text"
-    val resends = if (pending.resends > 0) ", asked again ${pending.resends}x" else ""
-    return if (pending.gaveUp) "Stopped at $progress. Retry to ask again." else "$progress$resends"
-}
+/** Cards on Home: raised from the background, their text at full strength. */
+@Composable
+private fun cardColors() = CardDefaults.cardColors(
+    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor = MaterialTheme.colorScheme.onSurface,
+)
 
 @Composable
-private fun PageCard(page: StoredPage, open: () -> Unit) {
+private fun PageCard(page: StoredPage, open: () -> Unit, delete: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().clickable(onClick = open).testTag("page-${encodeTag(page.tag)}"),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = cardColors(),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(page.text.lineSequence().first().removePrefix("# "), style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(4.dp))
-            Text(
-                pageMeta(page),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        Row(modifier = Modifier.padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = 4.dp)) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    page.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    pageMeta(page),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            IconButton(onClick = delete, modifier = Modifier.testTag("delete-${encodeTag(page.tag)}")) {
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = "Delete ${page.title}",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
-}
-
-internal fun pageMeta(page: StoredPage): String {
-    val kind = when (page.kind) {
-        Kind.SEARCH -> "Search results"
-        Kind.HELP -> "Help"
-        Kind.STATUS -> "Status"
-        Kind.PAGE -> "Page ${page.page} of ${page.pages}"
-    }
-    return "$kind · ${page.smsCount} texts · ${clock(page.receivedAtMillis)}"
 }

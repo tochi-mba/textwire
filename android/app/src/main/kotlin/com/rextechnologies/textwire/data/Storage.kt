@@ -15,7 +15,10 @@ data class StoredPage(
     val text: String,
     val smsCount: Int,
     val receivedAtMillis: Long,
-)
+) {
+    /** The first line without its heading mark: what the page is called in lists and notices. */
+    val title: String get() = text.lineSequence().first().removePrefix("# ").trim().ifEmpty { "Untitled" }
+}
 
 /** One line of the diagnostics log: an SMS in or out, or a note. */
 data class LogEntry(val atMillis: Long, val direction: Direction, val text: String, val note: String) {
@@ -47,9 +50,15 @@ interface Storage {
 
     fun forget(tag: Int)
 
+    /** Every page, and the requests and frames that made them; open requests stay. */
+    fun clearPages()
+
+    /** Pages received before [millis]; how many went. */
+    fun deletePagesBefore(millis: Long): Int
+
     fun log(entry: LogEntry)
 
     fun recentLog(limit: Int): List<LogEntry>
 
-    fun smsReceived(): Int
+    fun clearLog()
 }

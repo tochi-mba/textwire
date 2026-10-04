@@ -35,6 +35,10 @@ machine ready.
       for the affected lines, with the date and cost.
 - [ ] If a decision was made: an ADR in `docs/adr/` and a line in its index.
 - [ ] Docs describe the new behaviour; nothing in them is stale.
+- [ ] If a release changes what a person sees or can do in the app: replace `WHATS_NEW` in
+      `android/app/.../ui/WhatsNewDialog.kt` with what changed (a few features, each with
+      the screen it lives on) and raise `UpdateGuide.LATEST_GUIDE` by one, in the same
+      pull request. Fixes and changes nobody would notice do not get a guide.
 
 ## Style
 

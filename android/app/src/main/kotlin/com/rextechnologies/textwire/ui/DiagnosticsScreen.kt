@@ -12,26 +12,25 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.rextechnologies.textwire.Controller
 import com.rextechnologies.textwire.UiState
 import com.rextechnologies.textwire.data.LogEntry
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-private val CLOCK: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-
-internal fun clock(millis: Long): String = CLOCK.format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()))
 
 private const val LOG_PREVIEW = 90
 
 @Composable
-fun DiagnosticsScreen(state: UiState, controller: Controller, permissionsGranted: Boolean) {
+fun DiagnosticsScreen(
+    state: UiState,
+    controller: Controller,
+    permissionsGranted: Boolean,
+    notificationsAllowed: Boolean,
+) {
     LazyColumn(
         modifier = Modifier.testTag("diagnostics"),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -50,8 +49,18 @@ fun DiagnosticsScreen(state: UiState, controller: Controller, permissionsGranted
                         state.settings.serverNumber.ifBlank { "not set" },
                         state.settings.serverNumber.isNotBlank(),
                     )
+                    CheckRow(
+                        "Notifications",
+                        when {
+                            !state.settings.notifyOnArrival -> "off in Settings"
+                            notificationsAllowed -> "allowed"
+                            else -> "not allowed"
+                        },
+                        notificationsAllowed || !state.settings.notifyOnArrival,
+                    )
                     CheckRow("Dictionary", "v1, packaged", true)
-                    CheckRow("Texts today", state.meter.describe(), true)
+                    CheckRow("Received today", state.meter.describe(), true)
+                    CheckRow("Waiting for", replies(state.pending.size), true)
                 }
             }
         }
@@ -66,7 +75,16 @@ fun DiagnosticsScreen(state: UiState, controller: Controller, permissionsGranted
                 Text("Send ?")
             }
         }
-        item { Text("Recent texts", style = MaterialTheme.typography.titleMedium) }
+        item {
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text("Recent texts", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                if (state.log.isNotEmpty()) {
+                    TextButton(onClick = controller::clearLog, modifier = Modifier.testTag("clear-log")) {
+                        Text("Clear")
+                    }
+                }
+            }
+        }
         if (state.log.isEmpty()) {
             item {
                 Text(
@@ -97,7 +115,7 @@ private fun LogLine(entry: LogEntry) {
     val (arrow, color) = when (entry.direction) {
         LogEntry.Direction.IN -> "←" to MaterialTheme.colorScheme.primary
         LogEntry.Direction.OUT -> "→" to MaterialTheme.colorScheme.tertiary
-        LogEntry.Direction.NOTE -> "•" to Color.Unspecified
+        LogEntry.Direction.NOTE -> "•" to MaterialTheme.colorScheme.onSurface
     }
     Column(modifier = Modifier.padding(vertical = 2.dp)) {
         Text("${clock(entry.atMillis)} $arrow ${entry.note}", style = MaterialTheme.typography.bodySmall, color = color)

@@ -16,9 +16,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.rextechnologies.textwire.Controller
 import com.rextechnologies.textwire.UiState
@@ -39,19 +45,25 @@ fun ReaderScreen(state: UiState, controller: Controller) {
         }
         return
     }
-    val awaiting = state.pending.any { it.request.contains(" p ") || it.request.contains(" l ") }
+    KeepScreenOn(state.settings.keepScreenOn)
+    val awaiting = state.pending.any { turnsThePage(it.request) }
+    val blocks = remember(page.text) { parseDocument(page.text) }
     Column {
-        LazyColumn(modifier = Modifier.weight(1f).testTag("reader"), contentPadding = PaddingValues(vertical = 12.dp)) {
-            items(parseDocument(page.text)) { block -> BlockView(block, controller::followLink) }
-            item {
-                Text(
-                    "Tap a number in brackets to follow that link. ${page.smsCount} texts, reply ${encodeTag(
-                        page.tag,
-                    )}.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 16.dp),
-                )
+        ScaledText(state.settings.textScale) {
+            LazyColumn(
+                modifier = Modifier.weight(1f).testTag("reader"),
+                contentPadding = PaddingValues(vertical = 12.dp),
+            ) {
+                items(blocks) { block -> BlockView(block, controller::followLink) }
+                item {
+                    Text(
+                        "Tap a number in brackets to follow that link. ${texts(page.smsCount)}, reply " +
+                            "${encodeTag(page.tag)}.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 16.dp),
+                    )
+                }
             }
         }
         Row(
@@ -74,5 +86,25 @@ fun ReaderScreen(state: UiState, controller: Controller) {
                 modifier = Modifier.testTag("next"),
             ) { Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next page") }
         }
+    }
+}
+
+/** The reader's own text size: the phone's font scale times the person's choice. */
+@Composable
+private fun ScaledText(scale: Float, content: @Composable () -> Unit) {
+    val density = LocalDensity.current
+    CompositionLocalProvider(
+        LocalDensity provides Density(density.density, density.fontScale * scale),
+        content = content,
+    )
+}
+
+/** Holds the screen awake while the reader shows, if the person asked for that. */
+@Composable
+private fun KeepScreenOn(on: Boolean) {
+    val view = LocalView.current
+    DisposableEffect(view, on) {
+        view.keepScreenOn = on
+        onDispose { view.keepScreenOn = false }
     }
 }

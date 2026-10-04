@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- Lint calls the -v26 qualifier obsolete at minSdk 31, but AAPT only resolves an
+         adaptive icon from a folder that names API 26: without it the launcher icon is
+         "not found" and the build fails. -->
+    <issue id="ObsoleteSdkInt">
+        <ignore path="src/main/res/mipmap-anydpi-v26" />
+    </issue>
+</lint>
