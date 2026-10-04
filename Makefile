@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 
 .PHONY: help doctor install check server-check vectors vectors-check android-check android-apk \
-	android-install simulate run clean site site-serve
+	android-install simulate run clean site site-serve bench bench-record
 
 help: ## Show available targets
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -48,6 +48,16 @@ simulate: ## Browse from the terminal with a virtual phone and recorded pages
 
 run: ## Run the server
 	$(MAKE) -C server run
+
+bench: ## SMS per page and pipeline speed, server and phone, against benchmarks/
+	$(MAKE) -C server bench
+	@if command -v java >/dev/null 2>&1; then cd android && ./gradlew :core:bench --console=plain -q; \
+	else echo "phone bench: skipped, no JDK 17 on PATH"; fi
+
+bench-record: ## Record this checkout's numbers as the new baselines in benchmarks/
+	$(MAKE) -C server bench-record
+	@if command -v java >/dev/null 2>&1; then cd android && ./gradlew :core:bench -Precord --console=plain -q; \
+	else echo "phone bench: skipped, no JDK 17 on PATH"; fi
 
 site: ## Build the Pages site (landing page and handbook) into build/site; a broken link fails
 	cd server && uv run python scripts/build_site.py

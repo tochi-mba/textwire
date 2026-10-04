@@ -47,6 +47,7 @@ terminal with no phone and no account.
 | [protocol/](protocol/PROTOCOL.md) | The wire format, golden vectors, dictionary and fixtures. |
 | [server/](server/README.md) | The Python server. |
 | `android/` | The Android app. |
+| [benchmarks/](benchmarks/README.md) | The performance baseline: SMS per page and pipeline speed, with `make bench` to compare. |
 | `site/` | The landing page of the GitHub Pages site; the handbook beside it is built from this repository's Markdown. |
 | [docs/](docs/ARCHITECTURE.md) | Architecture, onboarding, operations, testing, acceptance, [optimisation](docs/OPTIMISATION.md), a [glossary](docs/GLOSSARY.md), a [FAQ](docs/FAQ.md), ADRs. |
 

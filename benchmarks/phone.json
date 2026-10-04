@@ -1,0 +1,10 @@
+{
+  "machine": {"java": "17.0.20.1", "system": "Windows 11 10.0"},
+  "speed": {
+    "load_dictionary_ms": 31.4528,
+    "decode_frames_ms": 8.1485,
+    "decompress_pages_ms": 1.3662,
+    "parse_pages_ms": 4.9417,
+    "receive_every_page_ms": 18.9769
+  }
+}

@@ -139,6 +139,14 @@ uv run python -P -m pytest tests/test_javascript.py -q    # as the suite runs th
 cannot drift from what ships. Without Node the two tests skip locally and say so; in CI a
 missing Node is a failure.
 
+## The performance baseline
+
+`make bench` measures what every recorded page costs in SMS and how fast the server makes
+it, and compares both with the committed [baseline](../benchmarks/README.md). A page that
+now takes more SMS fails it. `make bench-record` writes a new baseline; commit it with the
+change, and its diff is the review. The suite's `test_bench.py` keeps the baseline's cost
+half equal to what the code sends.
+
 ## The site
 
 `make site` builds the whole GitHub Pages site into `build/site`: MkDocs writes the handbook

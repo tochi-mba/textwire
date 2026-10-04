@@ -11,7 +11,10 @@ The cost of a reply is:
 SMS = ceil( (4 + compressed_text_bytes) / body_bytes_per_frame )
 ```
 
-so there are exactly three places to win: fewer text bytes to send, fewer compressed bytes
+Every number below can be checked against the committed [baseline](../benchmarks/README.md):
+`make bench` reports what an optimisation changed, in SMS and in milliseconds.
+
+There are exactly three places to win: fewer text bytes to send, fewer compressed bytes
 per text byte, and more body bytes per SMS. A fourth family of levers is latency, which
 costs nothing but patience. The last is what the SMS cost per segment is in the first place.
 

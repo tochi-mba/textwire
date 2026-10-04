@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from textwire import __version__
+from textwire.cli.bench import bench
 from textwire.cli.doctor import doctor
 from textwire.cli.serve import probe, serve
 from textwire.cli.simulate import simulate
@@ -42,6 +43,11 @@ def _serve(_args: argparse.Namespace) -> int:
 
 def _probe(args: argparse.Namespace) -> int:
     return asyncio.run(probe(args.number))
+
+
+def _bench(args: argparse.Namespace) -> int:
+    root = Path(args.root) if args.root else find_repo_root()
+    return bench(root, record=args.record, repeats=args.repeats)
 
 
 def _vectors(args: argparse.Namespace) -> int:
@@ -108,6 +114,14 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("action", choices=["regen", "check"])
     command.add_argument("--root", help="the repository root (found automatically)")
     command.set_defaults(handler=_vectors)
+
+    command = commands.add_parser(
+        "bench", help="measure SMS per page and pipeline speed against benchmarks/baseline.json"
+    )
+    command.add_argument("--record", action="store_true", help="write the result as the baseline")
+    command.add_argument("--repeats", type=int, default=15, help="runs per timing (median)")
+    command.add_argument("--root", help="the repository root (found automatically)")
+    command.set_defaults(handler=_bench)
     return parser
 
 
