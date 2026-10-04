@@ -46,6 +46,7 @@ PAGES = (
     "protocol/PROTOCOL.md",
     "protocol/dict/README.md",
     "protocol/fixtures/README.md",
+    "benchmarks/README.md",
     "docs/stylesheets/rex.css",
     "site/favicon.svg",
 )

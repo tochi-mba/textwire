@@ -148,6 +148,11 @@ def _paginate(
 _cached = lru_cache(maxsize=128)(_paginate)
 
 
+def clear_page_cache() -> None:
+    """Forget every remembered pagination, so a benchmark times the work and not the cache."""
+    _cached.cache_clear()
+
+
 def paginate(
     document: Document,
     dictionary: Dictionary,

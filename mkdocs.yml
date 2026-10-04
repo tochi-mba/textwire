@@ -67,6 +67,7 @@ nav:
       - Optimisation: docs/OPTIMISATION.md
       - The dictionary: protocol/dict/README.md
       - Fixtures: protocol/fixtures/README.md
+      - Benchmarks: benchmarks/README.md
   - Running it:
       - Operations: docs/OPERATIONS.md
       - Testing: docs/TESTING.md

@@ -38,7 +38,7 @@ abstract class GoldenVectorsTask : DefaultTask() {
     fun translate() {
         val files = source.get().asFile.listFiles { file -> file.extension == "json" }!!.sortedBy { it.name }
         val rows = files.map { file ->
-            val case = JsonSlurper().parse(file) as Map<*, *>
+            val case = JsonSlurper().parse(file, "UTF-8") as Map<*, *>
             (listOf(file.name) + columns.get().map { column -> render(lookup(case, column)) }).joinToString("\t") { encode(it) }
         }
         destination.get().asFile.apply { parentFile.mkdirs() }.writeText(rows.joinToString("\n"))
@@ -56,6 +56,45 @@ abstract class GoldenVectorsTask : DefaultTask() {
     private fun encode(text: String): String = Base64.getEncoder().encodeToString(text.toByteArray(Charsets.UTF_8))
 }
 
+/**
+ * Writes every page of every document vector as one row: the document, the cut (`b64/12`), the
+ * page number, the payload the server sends and the page's text, every field base64. The
+ * phone benchmark replays these the way the server would send them.
+ */
+@CacheableTask
+abstract class PagePayloadsTask : DefaultTask() {
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val source: DirectoryProperty
+
+    @get:OutputFile
+    abstract val destination: RegularFileProperty
+
+    @TaskAction
+    fun translate() {
+        val encoder = Base64.getEncoder()
+        val rows = mutableListOf<String>()
+        val files = source.get().asFile.listFiles { file -> file.extension == "json" }!!.sortedBy { it.name }
+        for (file in files) {
+            val pages = (JsonSlurper().parse(file, "UTF-8") as Map<*, *>)["pages"] as Map<*, *>
+            for ((cut, list) in pages.entries.sortedBy { it.key.toString() }) {
+                (list as List<*>).forEachIndexed { index, page ->
+                    page as Map<*, *>
+                    val fields = listOf(
+                        file.nameWithoutExtension,
+                        cut.toString(),
+                        "${index + 1}",
+                        "${page["payload_hex"]}",
+                        "${page["text"]}",
+                    )
+                    rows.add(fields.joinToString("\t") { encoder.encodeToString(it.toByteArray(Charsets.UTF_8)) })
+                }
+            }
+        }
+        destination.get().asFile.apply { parentFile.mkdirs() }.writeText(rows.joinToString("\n"))
+    }
+}
+
 /** Writes the numbered constants of `protocol/vectors/ids.json` as a properties resource. */
 @CacheableTask
 abstract class IdsPropertiesTask : DefaultTask() {
@@ -68,7 +107,7 @@ abstract class IdsPropertiesTask : DefaultTask() {
 
     @TaskAction
     fun translate() {
-        val ids = JsonSlurper().parse(source.get().asFile) as Map<*, *>
+        val ids = JsonSlurper().parse(source.get().asFile, "UTF-8") as Map<*, *>
         val lines = mutableListOf<String>()
         fun walk(prefix: String, value: Any?) {
             when (value) {

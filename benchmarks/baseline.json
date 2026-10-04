@@ -1,0 +1,164 @@
+{
+  "cost": {
+    "dictionary": {
+      "bytes": 901120,
+      "sha256": "0bd405e0b822b1e1ad6d91f365e8ff856875baa7683a91108beefdaea5b29046"
+    },
+    "documents": {
+      "dunmore-gazette-example": {
+        "b64/12": {
+          "fill": 0.87,
+          "pages": 1,
+          "payload_bytes": 595,
+          "ratio": 2.602,
+          "sms_first_page": 6,
+          "sms_total": 6,
+          "text_bytes": 1548
+        },
+        "b64/4": {
+          "fill": 0.949,
+          "pages": 2,
+          "payload_bytes": 649,
+          "ratio": 2.45,
+          "sms_first_page": 4,
+          "sms_total": 6,
+          "text_bytes": 1590
+        },
+        "plain/4": {
+          "pages": 3,
+          "sms_total": 12
+        },
+        "z85g/12": {
+          "fill": 0.983,
+          "pages": 1,
+          "payload_bytes": 595,
+          "ratio": 2.602,
+          "sms_first_page": 5,
+          "sms_total": 5,
+          "text_bytes": 1548
+        }
+      },
+      "en-wikipedia-org": {
+        "b64/12": {
+          "fill": 0.949,
+          "pages": 3,
+          "payload_bytes": 3462,
+          "ratio": 3.199,
+          "sms_first_page": 12,
+          "sms_total": 32,
+          "text_bytes": 11076
+        },
+        "b64/4": {
+          "fill": 0.898,
+          "pages": 10,
+          "payload_bytes": 3889,
+          "ratio": 2.875,
+          "sms_first_page": 4,
+          "sms_total": 38,
+          "text_bytes": 11181
+        },
+        "plain/4": {
+          "pages": 22,
+          "sms_total": 88
+        },
+        "z85g/12": {
+          "fill": 0.954,
+          "pages": 3,
+          "payload_bytes": 3462,
+          "ratio": 3.199,
+          "sms_first_page": 12,
+          "sms_total": 30,
+          "text_bytes": 11076
+        }
+      },
+      "notes-example": {
+        "b64/12": {
+          "fill": 0.886,
+          "pages": 1,
+          "payload_bytes": 202,
+          "ratio": 2.436,
+          "sms_first_page": 2,
+          "sms_total": 2,
+          "text_bytes": 492
+        },
+        "b64/4": {
+          "fill": 0.886,
+          "pages": 1,
+          "payload_bytes": 202,
+          "ratio": 2.436,
+          "sms_first_page": 2,
+          "sms_total": 2,
+          "text_bytes": 492
+        },
+        "plain/4": {
+          "pages": 1,
+          "sms_total": 4
+        },
+        "z85g/12": {
+          "fill": 0.835,
+          "pages": 1,
+          "payload_bytes": 202,
+          "ratio": 2.436,
+          "sms_first_page": 2,
+          "sms_total": 2,
+          "text_bytes": 492
+        }
+      },
+      "search-bbc-weather-london": {
+        "b64/12": {
+          "fill": 0.675,
+          "pages": 1,
+          "payload_bytes": 231,
+          "ratio": 3.459,
+          "sms_first_page": 3,
+          "sms_total": 3,
+          "text_bytes": 799
+        },
+        "b64/4": {
+          "fill": 0.675,
+          "pages": 1,
+          "payload_bytes": 231,
+          "ratio": 3.459,
+          "sms_first_page": 3,
+          "sms_total": 3,
+          "text_bytes": 799
+        },
+        "plain/4": {
+          "pages": 2,
+          "sms_total": 7
+        },
+        "z85g/12": {
+          "fill": 0.955,
+          "pages": 1,
+          "payload_bytes": 231,
+          "ratio": 3.459,
+          "sms_first_page": 2,
+          "sms_total": 2,
+          "text_bytes": 799
+        }
+      }
+    },
+    "sms_total": {
+      "b64/12": 43,
+      "b64/4": 49,
+      "plain/4": 111,
+      "z85g/12": 39
+    }
+  },
+  "machine": {
+    "processor": "AMD64",
+    "python": "3.12.10",
+    "system": "Windows 11"
+  },
+  "speed": {
+    "compress_article_ms": 18.4824,
+    "decode_page_frames_ms": 0.4965,
+    "decompress_article_ms": 0.0837,
+    "encode_page_frames_ms": 0.2591,
+    "extract_all_fixtures_ms": 826.9694,
+    "paginate_all_fixtures_ms": 119.1868,
+    "request_page_ms": 68.4416,
+    "request_search_ms": 9.5293
+  },
+  "version": "0.1.0"
+}

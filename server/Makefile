@@ -6,7 +6,7 @@ UV ?= uv
 PY := $(UV) run python
 
 .PHONY: help install fmt lint type imports test cov check run docker clean test-live \
-	vectors vectors-check simulate doctor
+	vectors vectors-check simulate doctor bench bench-record
 
 help: ## Show available targets
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -54,6 +54,12 @@ vectors: ## Regenerate the golden vectors in ../protocol/vectors
 
 vectors-check: ## Fail if the committed golden vectors drifted from the reference
 	$(PY) -m textwire vectors check
+
+bench: ## SMS per page and pipeline speed against ../benchmarks/baseline.json
+	$(PY) -m textwire bench
+
+bench-record: ## Record this checkout's numbers as the new baseline
+	$(PY) -m textwire bench --record
 
 docker: ## Build the container image
 	docker build -t textwire:local .
