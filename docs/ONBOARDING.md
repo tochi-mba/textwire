@@ -140,17 +140,41 @@ too (ADR-0011).
 The app wears the REX ink and signal colours, the same as the site and the dashboard, and
 has four screens, reached from the bar at the bottom:
 
-- **Home**: one field. Words search; something with a dot and no spaces opens as an address
-  (the Search and Open buttons force either). Replies in flight show as cards with a progress
-  bar, how many texts have arrived, how many times the app has asked again, and a Retry
-  button once it has given up. Pages that arrived are cards below; tap one to read it.
+- **Home**: one field. The keyboard's Go searches words and opens anything with a dot and
+  no spaces as an address; the Search and Open buttons force either. Replies in flight show
+  as cards with a progress bar, how many texts have arrived, how many times the app has
+  asked again, and Retry and Dismiss once it has given up. Pages that arrived are cards
+  below: tap one to read it, or the bin to delete it (the notice offers Undo).
 - **Reader**: the page, with link numbers in brackets you can tap, and Previous and Next at
-  the bottom. While a page is on its way the controls wait and say so.
-- **Diagnostics**: whether permissions are granted and the server number is set, today's
-  texts and cost, a button that sends `?`, and every text in and out with what the app made
-  of it. This is where the route probe (ACCEPTANCE.md line 10) is read.
-- **Settings**: the server number, texts per page and the price used for the estimate, each
-  validated as you type; a first-run guide until the number is set; the About card.
+  the bottom. While a page is on its way the controls wait and say so. The bar names the
+  page and has Share (as plain text, without the link numbers) and Delete.
+- **Diagnostics**: whether SMS and notifications are allowed and the server number is set,
+  today's texts and cost, how many replies are on their way, a button that sends `?`, and
+  every text in and out with what the app made of it, which Clear empties. This is where
+  the route probe (ACCEPTANCE.md line 10) is read.
+- **Settings**: every choice applies the moment it changes; typed values apply as soon as
+  they are valid and say what is wrong until then.
+
+| Setting | Choices | Default | What it does |
+| --- | --- | --- | --- |
+| Server number | an E.164 number | none | Where requests go. Nothing is sent until it is set; a first-run guide shows until then. |
+| Texts per page | 1 to 40 | 12 | Sent with every page and link request, so the server's own default never overrides it. The screen shows what a page then holds and costs. |
+| Open pages as they arrive | on, off | on | Off: a notice offers to open the page, and you stay where you are. |
+| Ask again after | 30 s, 1, 2, 5 min | 1 min | How long without a new text before the missing ones are asked for. |
+| Ask again up to | never, 1, 2, 3, 5 times | 3 | Then the reply stops with Retry. |
+| Price per text, currency | a price, three letters | 0.056, USD | Only for the estimates. |
+| Daily limit | off, 50, 100, 200, 500 | off | No new requests once this many texts have arrived today (UTC). Replies on their way still finish. |
+| Text size | small, default, large, largest | default | The reader's text, on top of the phone's own font size, with a sample. |
+| Keep the screen on while reading | on, off | off | Only while the reader shows. |
+| Tell me when a page arrives | on, off | on | A notification while textwire is not on screen; tapping it opens the page. Offers to ask Android again if it is blocking them. |
+| Keep pages for | 1, 7, 30 days, always | 30 days | Older pages go when the app starts and when a page arrives. Clear history deletes them all, after asking. |
+| Reset settings | | | Every choice back to its default, after asking. The server number is kept. |
+
+After an update that changes what a person sees, the app opens once on **What's new**: a
+short list of what changed, each with **Show me** to go straight to it, and **Got it** to
+close it for good. A new install never sees it (the first-run guide in Settings covers
+that), and Settings has a **What's new** button to read it again. The list is `WHATS_NEW`
+in `ui/WhatsNewDialog.kt`; CONTRIBUTING.md says when to change it.
 
 Line by line, [ACCEPTANCE.md](ACCEPTANCE.md) is the checklist a change to the app or the
 protocol is tested against on the device.

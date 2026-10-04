@@ -11,8 +11,11 @@ data class CostMeter(val segments: Int = 0, val pricePerSegment: Double = DEFAUL
     /** The estimated spend. */
     val estimate: Double get() = segments * pricePerSegment
 
-    /** `12 SMS, ~0.67 USD`. */
-    fun describe(): String = "$segments SMS, ~${"%.2f".format(estimate)} $currency"
+    /** `12 texts \u00b7 ~0.67 USD`. */
+    fun describe(): String {
+        val count = if (segments == 1) "1 text" else "$segments texts"
+        return "$count \u00b7 ~${"%.2f".format(estimate)} $currency"
+    }
 
     companion object {
         /** Twilio's UK outbound rate in 2026-09; the app's settings can change it. */

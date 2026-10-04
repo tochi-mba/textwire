@@ -34,8 +34,9 @@ class AllocatorAndMeterTest {
         val meter = CostMeter().plus(12).plus(3)
         assertEquals(15, meter.segments)
         assertEquals(0.84, meter.estimate, 1e-9)
-        assertEquals("15 SMS, ~0.84 USD", meter.describe())
-        assertEquals("2 SMS, ~0.10 GBP", CostMeter(2, 0.05, "GBP").describe())
+        assertEquals("15 texts \u00b7 ~0.84 USD", meter.describe())
+        assertEquals("2 texts \u00b7 ~0.10 GBP", CostMeter(2, 0.05, "GBP").describe())
+        assertEquals("1 text \u00b7 ~0.06 USD", CostMeter(1, 0.056, "USD").describe())
         assertFailsWith<IllegalArgumentException> { meter.plus(-1) }
     }
 }
