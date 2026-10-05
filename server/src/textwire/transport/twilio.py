@@ -75,6 +75,25 @@ class MessageResource:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class AccountResource:
+    """What the setup check reads about the account itself."""
+
+    name: str
+    status: str
+    #: ``Trial`` or ``Full``. A trial account prefixes every SMS it sends with a notice,
+    #: which breaks every frame, so the server needs ``Full``.
+    type: str
+
+
+@dataclass(frozen=True, slots=True)
+class NumberResource:
+    """A phone number the account owns, and whether it can send and receive SMS."""
+
+    number: str
+    sms: bool
+
+
 def _rfc2822(value: object) -> datetime | None:
     if not value:
         return None
@@ -144,6 +163,28 @@ class TwilioClient:
     async def get(self, sid: str) -> MessageResource:
         """One message's current state."""
         return MessageResource.from_json(await self._request("GET", f"/Messages/{sid}.json"))
+
+    async def account(self) -> AccountResource:
+        """The account the SID and token belong to; fails if Twilio does not accept them."""
+        data = await self._request("GET", f"{self._root}/{API_VERSION}/Accounts/{self._sid}.json")
+        return AccountResource(
+            name=str(data.get("friendly_name") or ""),
+            status=str(data.get("status") or ""),
+            type=str(data.get("type") or ""),
+        )
+
+    async def number(self, number: str) -> NumberResource | None:
+        """``number`` as the account owns it, or None when it is not one of the account's."""
+        data = await self._request(
+            "GET", "/IncomingPhoneNumbers.json", params={"PhoneNumber": number}
+        )
+        owned = data.get("incoming_phone_numbers") or []
+        if not owned:
+            return None
+        capabilities = owned[0].get("capabilities") or {}
+        return NumberResource(
+            number=str(owned[0].get("phone_number") or number), sms=bool(capabilities.get("sms"))
+        )
 
     async def list_to(self, recipient: str, since: datetime) -> list[MessageResource]:
         """Every message sent to ``recipient`` since ``since``, following the pages."""

@@ -8,6 +8,7 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- `textwire setup`: a guided walk from no Twilio account to a working `server/.env`, with a link to each Twilio page it needs (opened on request), every value checked as it is typed, the auth token never shown, and a live check that the account is upgraded (a trial account breaks every frame) and the number is the account's and can send SMS.
 - Repository skeleton: server and Android builds, CI, onboarding and the first ADRs.
 - Python protocol, shared golden vectors, recorded content and offline SMS simulator.
 - Optional Z85G encoding carries 121 payload bytes per segment; base64url remains the default.

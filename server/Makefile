@@ -6,7 +6,7 @@ UV ?= uv
 PY := $(UV) run python
 
 .PHONY: help install fmt lint type imports test cov check run docker clean test-live \
-	vectors vectors-check simulate doctor bench bench-record
+	vectors vectors-check simulate doctor bench bench-record setup
 
 help: ## Show available targets
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -54,6 +54,9 @@ vectors: ## Regenerate the golden vectors in ../protocol/vectors
 
 vectors-check: ## Fail if the committed golden vectors drifted from the reference
 	$(PY) -m textwire vectors check
+
+setup: ## Guided setup: the Twilio account, number and keys, written to .env
+	$(PY) -m textwire setup
 
 bench: ## SMS per page and pipeline speed against ../benchmarks/baseline.json
 	$(PY) -m textwire bench
