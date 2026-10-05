@@ -26,8 +26,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine
     from pathlib import Path
 
-    import httpx
-
 SIGN_UP = "https://www.twilio.com/try-twilio"
 UPGRADE = "https://console.twilio.com/us1/billing/manage-billing/billing-overview"
 BUY_NUMBER = "https://console.twilio.com/us1/develop/phone-numbers/manage/search"
@@ -118,14 +116,12 @@ async def check_twilio(
     number: str,
     *,
     base_url: str = "https://api.twilio.com",
-    transport: httpx.AsyncBaseTransport | None = None,
 ) -> Check:
     """Ask Twilio whether the SID and token work, the account is upgraded and the number is its."""
     client = TwilioClient(
         account_sid=sid,
         auth_token=token,
         base_url=base_url,
-        transport=transport,
         timeout_seconds=15,
     )
     lines: list[str] = []
