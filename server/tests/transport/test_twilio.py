@@ -17,7 +17,9 @@ from textwire.transport.twilio import (
     LAST_SEEN_KEY,
     MAX_LIST_PAGES,
     OVERLAP,
+    AccountResource,
     MessageResource,
+    NumberResource,
     TwilioClient,
     TwilioTransport,
     signature_matches,
@@ -280,3 +282,42 @@ def test_the_recorded_twilio_shapes_still_parse() -> None:
     assert resource.sid == "SMabc"
     assert resource.body == "hi"
     assert resource.date_created < EPOCH + timedelta(seconds=5)
+
+
+@respx.mock
+async def test_the_account_says_its_name_status_and_type() -> None:
+    respx.get(f"{BASE}.json").mock(
+        return_value=httpx.Response(
+            200, json={"friendly_name": "Tochi", "status": "active", "type": "Full"}
+        )
+    )
+    client = _client()
+    account = await client.account()
+    assert (account.name, account.status, account.type) == ("Tochi", "active", "Full")
+    respx.get(f"{BASE}.json").mock(return_value=httpx.Response(200, json={}))
+    assert await client.account() == AccountResource(name="", status="", type="")
+    await client.aclose()
+
+
+@respx.mock
+async def test_a_number_is_found_with_its_sms_capability_or_not_at_all() -> None:
+    route = respx.get(f"{BASE}/IncomingPhoneNumbers.json").mock(
+        side_effect=[
+            httpx.Response(
+                200,
+                json={
+                    "incoming_phone_numbers": [
+                        {"phone_number": SERVER, "capabilities": {"sms": True, "voice": True}}
+                    ]
+                },
+            ),
+            httpx.Response(200, json={"incoming_phone_numbers": [{"capabilities": None}]}),
+            httpx.Response(200, json={"incoming_phone_numbers": []}),
+        ]
+    )
+    client = _client()
+    assert await client.number(SERVER) == NumberResource(number=SERVER, sms=True)
+    assert await client.number(SERVER) == NumberResource(number=SERVER, sms=False)
+    assert await client.number(SERVER) is None
+    assert route.calls[0].request.url.params["PhoneNumber"] == SERVER
+    await client.aclose()

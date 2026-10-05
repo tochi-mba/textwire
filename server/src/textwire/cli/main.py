@@ -11,6 +11,7 @@ from textwire import __version__
 from textwire.cli.bench import bench
 from textwire.cli.doctor import doctor
 from textwire.cli.serve import probe, serve
+from textwire.cli.setup import setup
 from textwire.cli.simulate import simulate
 from textwire.vectors import check, find_repo_root, write
 
@@ -43,6 +44,11 @@ def _serve(_args: argparse.Namespace) -> int:
 
 def _probe(args: argparse.Namespace) -> int:
     return asyncio.run(probe(args.number))
+
+
+def _setup(args: argparse.Namespace) -> int:
+    server = (Path(args.root) if args.root else find_repo_root()) / "server"
+    return setup(server / ".env", server / ".env.example")
 
 
 def _bench(args: argparse.Namespace) -> int:
@@ -100,6 +106,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     command.add_argument("--page-frames", type=int, help="SMS per page (default from settings)")
     command.set_defaults(handler=_simulate)
+
+    command = commands.add_parser(
+        "setup", help="a guided setup: the Twilio account, number and keys, written to server/.env"
+    )
+    command.add_argument("--root", help="the repository root (found automatically)")
+    command.set_defaults(handler=_setup)
 
     command = commands.add_parser("serve", help="run the server: poll for requests and answer")
     command.set_defaults(handler=_serve)

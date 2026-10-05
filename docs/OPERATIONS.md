@@ -29,6 +29,18 @@ every one is listed with its default in [../server/.env.example](../server/.env.
 
 ## 2. The Twilio number
 
+The quickest way through this section and the next is the guided setup. It says what to do
+at each step with a link to the right Twilio page (and opens it if you like), checks each
+value as you type it, asks Twilio whether the account is upgraded and the number is yours,
+and writes `server/.env` without touching any other line. From Windows `cmd`:
+
+```bat
+cd /d "%USERPROFILE%\Documents\Code\textwire\server" && uv run python -m textwire setup
+```
+
+(`make -C server setup` from Git Bash.) Run it again at any time: what is already saved is
+offered back and Enter keeps it. The steps it walks through, for doing them by hand:
+
 1. Create a Twilio account and, in the console, buy a **UK mobile number** (a `+44 7` number,
    the "Mobile" type; "Clean" numbers cost the same and come with a spam-free history). Only
    a mobile number is inside the phone's unlimited-text bundle; a landline or short code
