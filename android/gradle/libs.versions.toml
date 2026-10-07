@@ -33,7 +33,7 @@ coroutines = "1.11.0"
 # carries Android natives for the app. Same classes, same version. Releases from 1.5.7-7 on
 # publish an AAR that demands compile SDK 37, which the SDK repository does not offer yet; 1.5.7-6
 # is the newest whose AAR builds against 36, and it is the same zstd 1.5.7 core.
-zstd-jni = "1.5.7-6"
+zstd-jni = "1.5.7-21"
 
 junit = "4.13.2"
 robolectric = "4.17"
